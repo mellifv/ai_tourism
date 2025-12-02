@@ -16,7 +16,8 @@ async function generateItineraryData(query = '') {
       },
       body: JSON.stringify({
         prompt: `Create a one-day Astana itinerary for: "${query}". 
-Include times, places, costs in KZT. 
+Include times, places, costs in KZT. IMPORTANT: Total cost must not exceed 400,000 KZT. 
+Each item should have a realistic cost (between 0 and 100,000 KZT). 
 Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`
       })
     });
