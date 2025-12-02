@@ -1,4 +1,14 @@
 export default {
+    header: {
+    title: "Путешествия с AI в Астане",
+    subtitle: "Умные гиды и маршруты"
+  },
+  nav: {
+    home: "Главная",
+    videoGuides: "Видео-гиды",
+    itineraries: "Маршруты",
+    cityInsights: "Городские советы"
+  },
   hero: {
     title: "Исследуйте Астану с маршрутами от ИИ",
     subtitle: "умные маршруты и местные советы",
