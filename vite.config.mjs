@@ -5,15 +5,20 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
-    middlewareMode: false,
+    // Enable history API fallback for React Router
+    historyApiFallback: true,
   },
   build: {
     outDir: 'dist',
+    // Add this for proper routing in production
+    rollupOptions: {
+      input: {
+        main: './index.html',
+      },
+    },
   },
   preview: {
     port: 3000,
   },
   assetsInclude: ['**/*.json'],
 });
-
