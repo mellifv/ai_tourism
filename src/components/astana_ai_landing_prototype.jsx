@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 // AI-powered itinerary generator ONLY
 async function generateItineraryData(query = '') {
   try {
-    const API_URL = 'http://localhost:3001/api/free-ai';
+    // Get API URL from environment variable with fallback
+    const API_BASE = import.meta.env.VITE_API_URL || 'https://aitourism-production.up.railway.app';
+    const API_ENDPOINT = `${API_BASE}/api/free-ai`;
     
-    console.log('Sending request to backend...');
-    
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,14 +20,11 @@ async function generateItineraryData(query = '') {
       })
     });
 
-    console.log('Backend Response status:', response.status);
-    
     if (!response.ok) {
-      throw new Error(`Backend error: ${response.status}`);
+      throw new Error(`Server error ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Backend Response data:', data);
 
     if (!data.success) {
       throw new Error(data.error || 'Backend request failed');
@@ -60,8 +57,8 @@ async function generateItineraryData(query = '') {
     }
 
   } catch (error) {
-    console.error('Backend API failed:', error);
-    throw new Error(`AI service error: ${error.message}`);
+    console.error('API error:', error);
+    throw new Error(`Failed to generate itinerary: ${error.message}`);
   }
 }
 
