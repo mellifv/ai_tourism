@@ -1,0 +1,38 @@
+{
+  "header": {
+    "title": "Astana AI Trips",
+    "subtitle": "Планирование путешествий будущего"
+  },
+  "nav": {
+    "features": "Возможности",
+    "experiences": "Впечатления",
+    "testimonials": "Отзывы",
+    "videoGuides": "Видеогиды",
+    "getStarted": "Начать"
+  },
+  "hero": {
+    "title": "Исследуйте <1>Астану</1> с искусственным интеллектом.",
+    "subtitle": "Умные планы на день, местные советы, бюджетные предложения — всё генерируется ИИ за секунды.",
+    "inputPlaceholder": "Опишите ваш идеальный день: 'Романтический день до 25к' или 'Семья с детьми, культурные достопримечательности'",
+    "generateButton": "Создать мой день",
+    "generating": "✨ ИИ планирует...",
+    "features": {
+      "aiPlans": "Планы от ИИ",
+      "realPlaces": "Реальные места Астаны",
+      "downloadPDF": "Скачать PDF"
+    }
+  },
+  "itinerary": {
+    "aiItinerary": "Маршрут от ИИ",
+    "enterPreferences": "Введите предпочтения, чтобы начать",
+    "total": "Итого",
+    "aiGenerated": "✨ Создано ИИ",
+    "downloadPDF": "Скачать PDF"
+  },
+  "footer": {
+    "copyright": "© {year} Astana AI Trips",
+    "privacy": "Конфиденциальность",
+    "terms": "Условия",
+    "contact": "Контакты"
+  }
+}
