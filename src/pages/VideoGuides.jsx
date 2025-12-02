@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, MapPin, Clock, Train, Bus, Car, Footprints, Navigation, Smartphone } from 'lucide-react';
-
+import { useLanguage } from '../context/LanguageContext';
+const { t } = useLanguage();
 export default function VideoGuides() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedGuide, setSelectedGuide] = useState(null);
