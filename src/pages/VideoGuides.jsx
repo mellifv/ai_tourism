@@ -2,42 +2,243 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, MapPin, Clock, Train, Bus, Car, Footprints, Navigation, Smartphone } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext'; // Import your hook
 
 export default function VideoGuides() {
-  const { t } = useLanguage();
+  const { t } = useLanguage(); // Use your hook
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const categories = [
-    { id: 'all', name: t('categories.allGuides', 'All Guides'), icon: '🧭', color: 'from-blue-400 to-cyan-400' },
-    { id: 'public', name: t('categories.publicTransport', 'Public Transport'), icon: '🚌', color: 'from-green-400 to-emerald-400' },
-    { id: 'walking', name: t('categories.walkingRoutes', 'Walking Routes'), icon: '🚶', color: 'from-purple-400 to-pink-400' },
-    { id: 'driving', name: t('categories.driving', 'Driving'), icon: '🚗', color: 'from-orange-400 to-red-400' },
-    { id: 'culture', name: t('categories.culture', 'Culture'), icon: '🎭', color: 'from-amber-400 to-orange-400' },
+    { id: 'all', name: t('categories.allGuides'), icon: '🧭', color: 'from-blue-400 to-cyan-400' },
+    { id: 'public', name: t('categories.publicTransport'), icon: '🚌', color: 'from-green-400 to-emerald-400' },
+    { id: 'walking', name: t('categories.walkingRoutes'), icon: '🚶', color: 'from-purple-400 to-pink-400' },
+    { id: 'driving', name: t('categories.driving'), icon: '🚗', color: 'from-orange-400 to-red-400' },
+    { id: 'culture', name: t('categories.culture'), icon: '🎭', color: 'from-amber-400 to-orange-400' },
   ];
 
   const guides = [
     {
       id: 1,
-      title: t('guides.abuDhabi.title', 'Abu Dhabi Plaza Navigation'),
-      description: t('guides.abuDhabi.description', 'How to navigate the largest mall in Central Asia'),
-      category: 'public',
-      duration: "0:38",
-      transport: ['bus', 'walking'],
+      title: t('guides.abuDhabi.title'),
+      description: t('guides.abuDhabi.description'),
+      category: t('guides.abuDhabi.category'),
+      duration: t('guides.abuDhabi.duration'),
+      transport: ['bus', 'walking'].map(transport => t(`transport.${transport}`)),
       landmarks: [
-        t('guides.abuDhabi.landmarks.0', 'Main Entrance'),
-        t('guides.abuDhabi.landmarks.1', 'Food Court'),
-        t('guides.abuDhabi.landmarks.2', 'Cinema')
+        t('guides.abuDhabi.landmarks.0'),
+        t('guides.abuDhabi.landmarks.1'),
+        t('guides.abuDhabi.landmarks.2')
       ],
-      difficulty: "Easy",
-      aiTip: t('guides.abuDhabi.aiTip', 'Visit during weekdays to avoid crowds'),
-      estimatedTime: "30 min",
-      cost: "110₸",
+      difficulty: t('guides.abuDhabi.difficulty'),
+      aiTip: t('guides.abuDhabi.aiTip'),
+      estimatedTime: t('guides.abuDhabi.estimatedTime'),
+      cost: t('guides.abuDhabi.cost'),
       videoPublicId: "AbuDhaby_tfvpi9"
     },
-    // Add more guides here following the same structure
+    {
+      id: 2,
+      title: t('guides.atryauBridge.title'),
+      description: t('guides.atryauBridge.description'),
+      category: t('guides.atryauBridge.category'),
+      duration: t('guides.atryauBridge.duration'),
+      transport: ['bus', 'walking'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.atryauBridge.landmarks.0'),
+        t('guides.atryauBridge.landmarks.1'),
+        t('guides.atryauBridge.landmarks.2')
+      ],
+      difficulty: t('guides.atryauBridge.difficulty'),
+      aiTip: t('guides.atryauBridge.aiTip'),
+      estimatedTime: t('guides.atryauBridge.estimatedTime'),
+      cost: t('guides.atryauBridge.cost'),
+      videoPublicId: "AtyrauBridge_i99y9q"
+    },
+    {
+      id: 3,
+      title: t('guides.operaPhilharmonic.title'),
+      description: t('guides.operaPhilharmonic.description'),
+      category: t('guides.operaPhilharmonic.category'),
+      duration: t('guides.operaPhilharmonic.duration'),
+      transport: ['walking', 'taxi'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.operaPhilharmonic.landmarks.0'),
+        t('guides.operaPhilharmonic.landmarks.1'),
+        t('guides.operaPhilharmonic.landmarks.2')
+      ],
+      difficulty: t('guides.operaPhilharmonic.difficulty'),
+      aiTip: t('guides.operaPhilharmonic.aiTip'),
+      estimatedTime: t('guides.operaPhilharmonic.estimatedTime'),
+      cost: t('guides.operaPhilharmonic.cost'),
+      videoPublicId: "Мерейка_филармони_gv4pyu"
+    },
+    {
+      id: 4,
+      title: t('guides.baursak.title'),
+      description: t('guides.baursak.description'),
+      category: t('guides.baursak.category'),
+      duration: t('guides.baursak.duration'),
+      transport: ['walking'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.baursak.landmarks.0'),
+        t('guides.baursak.landmarks.1'),
+        t('guides.baursak.landmarks.2')
+      ],
+      difficulty: t('guides.baursak.difficulty'),
+      aiTip: t('guides.baursak.aiTip'),
+      estimatedTime: t('guides.baursak.estimatedTime'),
+      cost: t('guides.baursak.cost'),
+      videoPublicId: "Лаура_бауырсак_uo5kbu"
+    },
+    {
+      id: 5,
+      title: t('guides.kurt.title'),
+      description: t('guides.kurt.description'),
+      category: t('guides.kurt.category'),
+      duration: t('guides.kurt.duration'),
+      transport: ['walking', 'taxi'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.kurt.landmarks.0'),
+        t('guides.kurt.landmarks.1'),
+        t('guides.kurt.landmarks.2')
+      ],
+      difficulty: t('guides.kurt.difficulty'),
+      aiTip: t('guides.kurt.aiTip'),
+      estimatedTime: t('guides.kurt.estimatedTime'),
+      cost: t('guides.kurt.cost'),
+      videoPublicId: "Мерейка_Курт_xa1miu"
+    },
+    {
+      id: 6,
+      title: t('guides.kokpar.title'),
+      description: t('guides.kokpar.description'),
+      category: t('guides.kokpar.category'),
+      duration: t('guides.kokpar.duration'),
+      transport: ['car', 'taxi'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.kokpar.landmarks.0'),
+        t('guides.kokpar.landmarks.1'),
+        t('guides.kokpar.landmarks.2')
+      ],
+      difficulty: t('guides.kokpar.difficulty'),
+      aiTip: t('guides.kokpar.aiTip'),
+      estimatedTime: t('guides.kokpar.estimatedTime'),
+      cost: t('guides.kokpar.cost'),
+      videoPublicId: "Kokpar_tart9k"
+    },
+    {
+      id: 7,
+      title: t('guides.asyk.title'),
+      description: t('guides.asyk.description'),
+      category: t('guides.asyk.category'),
+      duration: t('guides.asyk.duration'),
+      transport: ['walking'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.asyk.landmarks.0'),
+        t('guides.asyk.landmarks.1'),
+        t('guides.asyk.landmarks.2')
+      ],
+      difficulty: t('guides.asyk.difficulty'),
+      aiTip: t('guides.asyk.aiTip'),
+      estimatedTime: t('guides.asyk.estimatedTime'),
+      cost: t('guides.asyk.cost'),
+      videoPublicId: "Asyk_game_crtokp"
+    },
+    {
+      id: 8,
+      title: t('guides.aulaCafe.title'),
+      description: t('guides.aulaCafe.description'),
+      category: t('guides.aulaCafe.category'),
+      duration: t('guides.aulaCafe.duration'),
+      transport: ['walking'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.aulaCafe.landmarks.0'),
+        t('guides.aulaCafe.landmarks.1'),
+        t('guides.aulaCafe.landmarks.2'),
+        t('guides.aulaCafe.landmarks.3')
+      ],
+      difficulty: t('guides.aulaCafe.difficulty'),
+      aiTip: t('guides.aulaCafe.aiTip'),
+      estimatedTime: t('guides.aulaCafe.estimatedTime'),
+      cost: t('guides.aulaCafe.cost'),
+      videoPublicId: "Aula_cafe_dawcgs"
+    },
+    {
+      id: 9,
+      title: t('guides.lightRail.title'),
+      description: t('guides.lightRail.description'),
+      category: t('guides.lightRail.category'),
+      duration: t('guides.lightRail.duration'),
+      transport: ['light-rail', 'walking'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.lightRail.landmarks.0'),
+        t('guides.lightRail.landmarks.1'),
+        t('guides.lightRail.landmarks.2'),
+        t('guides.lightRail.landmarks.3')
+      ],
+      difficulty: t('guides.lightRail.difficulty'),
+      aiTip: t('guides.lightRail.aiTip'),
+      estimatedTime: t('guides.lightRail.estimatedTime'),
+      cost: t('guides.lightRail.cost'),
+      videoPublicId: "tutorial_q0crmk"
+    },
+    {
+      id: 10,
+      title: t('guides.circus.title'),
+      description: t('guides.circus.description'),
+      category: t('guides.circus.category'),
+      duration: t('guides.circus.duration'),
+      transport: ['walking', 'taxi', 'bus'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.circus.landmarks.0'),
+        t('guides.circus.landmarks.1'),
+        t('guides.circus.landmarks.2'),
+        t('guides.circus.landmarks.3')
+      ],
+      difficulty: t('guides.circus.difficulty'),
+      aiTip: t('guides.circus.aiTip'),
+      estimatedTime: t('guides.circus.estimatedTime'),
+      cost: t('guides.circus.cost'),
+      videoPublicId: "tutorialDilnaz_hsxqky"
+    },
+    {
+      id: 11,
+      title: t('guides.nationalMuseum.title'),
+      description: t('guides.nationalMuseum.description'),
+      category: t('guides.nationalMuseum.category'),
+      duration: t('guides.nationalMuseum.duration'),
+      transport: ['walking', 'metro'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.nationalMuseum.landmarks.0'),
+        t('guides.nationalMuseum.landmarks.1'),
+        t('guides.nationalMuseum.landmarks.2')
+      ],
+      difficulty: t('guides.nationalMuseum.difficulty'),
+      aiTip: t('guides.nationalMuseum.aiTip'),
+      estimatedTime: t('guides.nationalMuseum.estimatedTime'),
+      cost: t('guides.nationalMuseum.cost'),
+      videoPublicId: "1763065230261842_bfpmue"
+    },
+    {
+      id: 12,
+      title: t('guides.ailand.title'),
+      description: t('guides.ailand.description'),
+      category: t('guides.ailand.category'),
+      duration: t('guides.ailand.duration'),
+      transport: ['bus', 'taxi', 'walking'].map(transport => t(`transport.${transport}`)),
+      landmarks: [
+        t('guides.ailand.landmarks.0'),
+        t('guides.ailand.landmarks.1'),
+        t('guides.ailand.landmarks.2'),
+        t('guides.ailand.landmarks.3')
+      ],
+      difficulty: t('guides.ailand.difficulty'),
+      aiTip: t('guides.ailand.aiTip'),
+      estimatedTime: t('guides.ailand.estimatedTime'),
+      cost: t('guides.ailand.cost'),
+      videoPublicId: "Ailand_fp5jkk"
+    }
   ];
 
   const filteredGuides = selectedCategory === 'all' 
@@ -46,12 +247,12 @@ export default function VideoGuides() {
 
   const getTransportIcon = (transport) => {
     const icons = {
-      metro: <Train className="w-4 h-4" />,
       bus: <Bus className="w-4 h-4" />,
-      car: <Car className="w-4 h-4" />,
       walking: <Footprints className="w-4 h-4" />,
-      'light-rail': <Train className="w-4 h-4" />,
       taxi: <Car className="w-4 h-4" />,
+      car: <Car className="w-4 h-4" />,
+      metro: <Train className="w-4 h-4" />,
+      'light-rail': <Train className="w-4 h-4" />,
     };
     return icons[transport] || <Navigation className="w-4 h-4" />;
   };
@@ -64,9 +265,26 @@ export default function VideoGuides() {
     setIsVideoPlaying(false);
   };
 
+  // Update the filteredGuides logic to work with translated categories
+  const getCategoryIdFromTranslation = (translatedCategory) => {
+    // Map translated category back to ID
+    const categoryMap = {
+      [t('categories.publicTransport')]: 'public',
+      [t('categories.culture')]: 'culture',
+      [t('categories.walkingRoutes')]: 'walking',
+      [t('categories.driving')]: 'driving',
+      // Add other category mappings as needed
+    };
+    return categoryMap[translatedCategory] || translatedCategory;
+  };
+
+  const actuallyFilteredGuides = selectedCategory === 'all' 
+    ? guides 
+    : guides.filter(guide => getCategoryIdFromTranslation(guide.category) === selectedCategory);
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
+      {/* Hero section with translations */}
       <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-cyan-500 py-20">
         <div className="relative px-6 text-center max-w-5xl mx-auto z-10">
           <motion.h1
@@ -75,8 +293,8 @@ export default function VideoGuides() {
             transition={{ delay: 0.1 }}
             className="heading-font text-5xl md:text-6xl font-extrabold leading-tight mb-4 text-white"
           >
-            {t('videoGuides.hero.title', 'Astana Video Guides')} <br />
-            <span className="text-cyan-200">{t('videoGuides.hero.subtitle', 'See Before You Go')}</span>
+            {t('videoGuides.hero.title')} <br />
+            <span className="text-cyan-200">{t('videoGuides.hero.subtitle')}</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -84,15 +302,18 @@ export default function VideoGuides() {
             transition={{ delay: 0.2 }}
             className="text-lg text-blue-50 max-w-2xl mx-auto"
           >
-            {t('videoGuides.hero.description', 'Visual guides to navigate Astana like a local')}
+            {t('videoGuides.hero.description')}
           </motion.p>
         </div>
       </div>
 
-      {/* Categories */}
+      {/* Category Filter */}
       <div className="max-w-6xl mx-auto px-6 py-12">
-        <motion.div layout className="flex flex-wrap justify-center gap-4">
-          {categories.map(category => (
+        <motion.div 
+          layout
+          className="flex flex-wrap justify-center gap-4"
+        >
+          {categories.map((category) => (
             <motion.button
               key={category.id}
               whileHover={{ scale: 1.05 }}
@@ -111,7 +332,7 @@ export default function VideoGuides() {
         </motion.div>
       </div>
 
-      {/* Guides Grid */}
+      {/* Guides Grid - Proper Equal-Sized Cards */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
         <motion.div 
           layout
@@ -135,11 +356,13 @@ export default function VideoGuides() {
                   <div className="relative h-48 bg-slate-100 flex items-center justify-center overflow-hidden rounded-t-2xl">
                     {guide.videoPublicId ? (
                       <>
+                        {/* Cloudinary video thumbnail */}
                         <img 
                           src={`https://res.cloudinary.com/djwoojdrl/video/upload/c_thumb,w_400,h_225,g_auto/${guide.videoPublicId}.jpg`}
                           alt={guide.title}
                           className="w-full h-full object-cover"
                         />
+                        {/* Play button overlay */}
                         <motion.div
                           className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
                           whileHover={{ scale: 1.05 }}
@@ -150,6 +373,7 @@ export default function VideoGuides() {
                         </motion.div>
                       </>
                     ) : (
+                      // Fallback if no video
                       <div className="w-full h-full bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
                         <div className="text-center text-slate-400">
                           <Play className="w-8 h-8 mx-auto mb-2" />
@@ -254,6 +478,7 @@ export default function VideoGuides() {
               {/* Cloudinary Video Player */}
               <div className="relative w-full h-64 bg-black rounded-t-3xl overflow-hidden">
                 {!isVideoPlaying ? (
+                  // Video thumbnail with play button
                   <div 
                     className="absolute inset-0 flex items-center justify-center cursor-pointer bg-cover bg-center"
                     style={{ 
@@ -274,6 +499,7 @@ export default function VideoGuides() {
                     </div>
                   </div>
                 ) : (
+                  // Actual Cloudinary video with quality optimization
                   <video
                     className="w-full h-full object-cover"
                     controls
@@ -289,6 +515,7 @@ export default function VideoGuides() {
                   </video>
                 )}
                 
+                {/* Video duration badge */}
                 <div className="absolute top-3 right-3 flex items-center gap-1 px-3 py-1 bg-black/70 rounded-full text-xs font-semibold text-white shadow-lg">
                   <Clock className="w-3 h-3" />
                   {selectedGuide.duration}
@@ -316,7 +543,7 @@ export default function VideoGuides() {
                 </div>
 
                 <div className="space-y-4">
-                  {/* Details Grid */}
+                  {/* Details Grid with Blue Accents */}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div className="p-3 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg border border-blue-200/30">
                       <div className="text-xs text-blue-600 mb-1 font-semibold">Time</div>
@@ -332,7 +559,7 @@ export default function VideoGuides() {
                     </div>
                   </div>
 
-                  {/* Transport */}
+                  {/* Transport with Blue Theme */}
                   <div>
                     <h4 className="font-semibold text-blue-900 mb-2">🚌 Transport Options</h4>
                     <div className="flex gap-2 flex-wrap">
@@ -345,7 +572,7 @@ export default function VideoGuides() {
                     </div>
                   </div>
 
-                  {/* Landmarks */}
+                  {/* Landmarks with Blue Theme */}
                   <div>
                     <h4 className="font-semibold text-blue-900 mb-2">📍 Landmarks</h4>
                     <div className="flex gap-2 flex-wrap">
@@ -358,7 +585,7 @@ export default function VideoGuides() {
                     </div>
                   </div>
 
-                  {/* AI Insight */}
+                  {/* AI Insight with Enhanced Blue Gradient */}
                   <div className="p-4 bg-gradient-to-r from-blue-100 via-cyan-50 to-blue-50 rounded-lg border border-blue-300/50 shadow-sm">
                     <div className="flex items-start gap-3">
                       <Smartphone className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
