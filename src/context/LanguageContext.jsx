@@ -8,6 +8,20 @@ export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
   const [translations, setTranslations] = useState({});
 
+  // Load saved language on start
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+  }, []);
+
+  // Save language when changed
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
+
+  // Load translations
   useEffect(() => {
     const loadTranslations = async () => {
       try {
@@ -16,16 +30,19 @@ export const LanguageProvider = ({ children }) => {
       } catch (error) {
         console.error('Failed to load translations:', error);
         // Fallback to English
-        const englishModule = await import('../locales/en.json');
-        setTranslations(englishModule.default || englishModule);
+        try {
+          const englishModule = await import('../locales/en.json');
+          setTranslations(englishModule.default || englishModule);
+        } catch (e) {
+          setTranslations({});
+        }
       }
     };
 
     loadTranslations();
   }, [language]);
 
-  // Get translation with key path (e.g., "header.title")
-  const t = (key, variables = {}) => {
+  const t = (key, defaultValue = '') => {
     const keys = key.split('.');
     let value = translations;
     
@@ -33,19 +50,20 @@ export const LanguageProvider = ({ children }) => {
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
       } else {
-        return key; // Return key if translation not found
+        return defaultValue || key;
       }
     }
 
-    // Replace variables like {year}
     if (typeof value === 'string') {
-      return Object.keys(variables).reduce(
-        (str, varKey) => str.replace(`{${varKey}}`, variables[varKey]),
-        value
-      );
+      // Replace variables like {year}
+      return value.replace(/{(\w+)}/g, (match, varName) => {
+        // You can add variables here if needed
+        if (varName === 'year') return new Date().getFullYear();
+        return match;
+      });
     }
     
-    return value || key;
+    return value || defaultValue || key;
   };
 
   return (
