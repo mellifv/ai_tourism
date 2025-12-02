@@ -5,7 +5,6 @@ import ThreeScene from '../components/ThreeScene';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageSelect from '../components/LanguageSelector';
 
 // Leaflet marker fix omitted for brevity...
 // Custom icon and touristPlaces array remain the same
