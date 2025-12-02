@@ -174,18 +174,7 @@ export default function Home() {
             </div>
           </Link>
         </div>
-        
-        {/* Navigation links for Itineraries page specifically */}
-        <nav className="flex items-center gap-6">
-          <Link to="/" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">
-            Home
-          </Link>
-          <Link to="/videos" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">
-            Video Guides
-          </Link>
-          <Link to="/insights" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">
-            City Insights
-          </Link>
+      
           
           {/* Language switcher */}
           <div className="flex items-center gap-2 ml-4">
