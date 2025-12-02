@@ -1,19 +1,31 @@
 {
   "header": {
-    "title": "Astana AI Trips",
-    "subtitle": "Планирование путешествий"
+    "title": "Астана AI Туры",
+    "subtitle": "Путешествия с будущим"
   },
   "nav": {
     "home": "Главная",
-    "videoGuides": "Видеогиды",
+    "videoGuides": "Видео гиды",
     "itineraries": "Маршруты",
-    "cityInsights": "Инсайты"
+    "cityInsights": "Обзор города"
   },
   "hero": {
     "title": "Исследуйте Астану",
-    "subtitle": "Планы от ИИ",
-    "inputPlaceholder": "Опишите ваш день",
-    "generateButton": "Создать",
-    "generating": "Планирование..."
+    "subtitle": "Планы путешествий, созданные ИИ",
+    "inputPlaceholder": "Опишите ваш идеальный день",
+    "generateButton": "Сгенерировать",
+    "generating": "Планируем..."
+  },
+  "videoGuides": {
+    "title": "Видео гиды",
+    "subtitle": "Узнайте о городе через увлекательные видео"
+  },
+  "itineraries": {
+    "title": "Маршруты",
+    "subtitle": "Индивидуальные маршруты для любого бюджета"
+  },
+  "cityInsights": {
+    "title": "Обзор города",
+    "subtitle": "Откройте скрытые места и советы местных"
   }
 }
