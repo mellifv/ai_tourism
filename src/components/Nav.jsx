@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useLanguage } from '../context/LanguageContext'; // Add this
+import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
+
 export default function Nav() {
-   const { t } = useLanguage(); // Add this
+  const { t } = useLanguage();
   const location = useLocation();
+
   return (
     <nav className="w-full bg-white/5 backdrop-blur-sm border-b border-white/5">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -13,8 +15,8 @@ export default function Nav() {
             AI
           </div>
           <div className="hidden md:block">
-            <div className="text-sm font-bold">Astana AI Trips</div>
-            <div className="text-xs text-slate-300">Smart guides & itineraries</div>
+            <div className="text-sm font-bold">{t('header.title', 'Astana AI Trips')}</div>
+            <div className="text-xs text-slate-300">{t('header.subtitle', 'Smart guides & itineraries')}</div>
           </div>
         </Link>
 
@@ -23,26 +25,29 @@ export default function Nav() {
             to="/"
             className={`px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/' ? 'bg-blue-600 text-white' : 'text-slate-200 hover:bg-white/5'}`}
           >
-            Home
+            {t('nav.home', 'Home')}
           </Link>
           <Link
             to="/videos"
             className={`px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/videos' ? 'bg-blue-600 text-white' : 'text-slate-200 hover:bg-white/5'}`}
           >
-            Video Guides
+            {t('nav.videoGuides', 'Video Guides')}
           </Link>
           <Link
             to="/itineraries"
             className={`px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/itineraries' ? 'bg-blue-600 text-white' : 'text-slate-200 hover:bg-white/5'}`}
           >
-            Itineraries
+            {t('nav.itineraries', 'Itineraries')}
           </Link>
           <Link
             to="/insights"
             className={`px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/insights' ? 'bg-blue-600 text-white' : 'text-slate-200 hover:bg-white/5'}`}
           >
-            City Insights
+            {t('nav.cityInsights', 'City Insights')}
           </Link>
+          
+          {/* Add LanguageSelector here */}
+          <LanguageSelector />
         </div>
       </div>
     </nav>
