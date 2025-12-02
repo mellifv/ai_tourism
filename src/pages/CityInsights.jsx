@@ -119,9 +119,7 @@ const CityInsights = () => {
 
   return (
     <div className="min-h-screen text-white bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-      <div className="fixed top-4 right-4 z-50">
-        <LanguageSelector />
-      </div>
+
 
       <motion.img
         src="/kazakh_guide.png"
