@@ -9,7 +9,7 @@ export async function POST(request) {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: prompt
+            text: prompt // Your full prompt is already in the frontend
           }]
         }]
       })
@@ -26,20 +26,41 @@ export async function POST(request) {
     }
     
     return new Response(JSON.stringify({ 
+      success: true,
       response: data.candidates[0].content.parts[0].text 
     }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST'
+      }
     });
     
   } catch (error) {
     console.error('API Error:', error);
     return new Response(JSON.stringify({ 
+      success: false,
       error: 'Failed to generate response',
       details: error.message 
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
     });
   }
+}
+
+// Handle OPTIONS for CORS
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    }
+  });
 }
