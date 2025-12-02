@@ -339,7 +339,7 @@ export default function VideoGuides() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max"
         >
           <AnimatePresence>
-            {filteredGuides.map((guide, index) => (
+            {actuallyFilteredGuides.map((guide, index) => (
               <motion.div
                 key={guide.id}
                 layout
