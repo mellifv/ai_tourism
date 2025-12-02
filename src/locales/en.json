@@ -15,5 +15,17 @@
     "inputPlaceholder": "Describe your perfect day",
     "generateButton": "Generate",
     "generating": "Planning..."
+  },
+  "videoGuides": {
+    "title": "Video Guides",
+    "subtitle": "Learn about the city through immersive videos"
+  },
+  "itineraries": {
+    "title": "Itineraries",
+    "subtitle": "Custom AI-generated travel routes for every budget"
+  },
+  "cityInsights": {
+    "title": "City Insights",
+    "subtitle": "Discover hidden gems and local tips"
   }
 }
