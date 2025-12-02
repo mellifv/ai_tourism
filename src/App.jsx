@@ -5,11 +5,14 @@ import VideoGuides from "./pages/VideoGuides";
 import Nav from "./components/Nav";
 import Itineraries from "./pages/Itineraries";
 import CityInsights from "./pages/CityInsights";
+import GoogleTranslateWidget from "./pages/translate"; // 👈 new
 
 export default function App() {
   return (
     <Router>
       <Nav />
+      {/* Global language switcher */}
+      <GoogleTranslateWidget />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/videos" element={<VideoGuides />} />
