@@ -1,12 +1,11 @@
-// App.jsx
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import VideoGuides from "./pages/VideoGuides";
-import Nav from "./components/Nav";
 import Itineraries from "./pages/Itineraries";
 import CityInsights from "./pages/CityInsights";
-import { LanguageProvider } from './context/LanguageContext';
+import Nav from "./components/Nav";
+import { LanguageProvider } from "./context/LanguageContext";
 
 export default function App() {
   return (
@@ -23,4 +22,3 @@ export default function App() {
     </LanguageProvider>
   );
 }
-
