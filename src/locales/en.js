@@ -1,4 +1,14 @@
 export default {
+    header: {
+    title: "Astana AI Trips",
+    subtitle: "Smart guides & itineraries"
+  },
+  nav: {
+    home: "Home",
+    videoGuides: "Video Guides",
+    itineraries: "Itineraries",
+    cityInsights: "City Insights"
+  },
   hero: {
     title: "Explore Astana with AI-curated",
     subtitle: "smart routes & local tips",
@@ -56,3 +66,4 @@ export default {
     }
   }
 };
+
