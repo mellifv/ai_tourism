@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import en from '../locales/en.json';
-import ru from '../locales/ru.json';
-import kz from '../locales/kz.json';
+import en from '../locales/en';
+import ru from '../locales/ru';
+import kz from '../locales/kz';
 
 const languages = { en, ru, kz };
 
