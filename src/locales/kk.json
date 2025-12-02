@@ -1,19 +1,31 @@
 {
   "header": {
-    "title": "Astana AI Trips",
-    "subtitle": "Саяхат жоспарлау"
+    "title": "Астана AI Саяхаттары",
+    "subtitle": "Болашаққа сай саяхат жоспарлау"
   },
   "nav": {
-    "home": "Басты",
-    "videoGuides": "Бейнелер",
+    "home": "Басты бет",
+    "videoGuides": "Видео нұсқаулар",
     "itineraries": "Маршруттар",
-    "cityInsights": "Мәліметтер"
+    "cityInsights": "Қала шолуы"
   },
   "hero": {
     "title": "Астананы зерттеңіз",
-    "subtitle": "ЖИ жоспарлары",
-    "inputPlaceholder": "Күніңізді сипаттаңыз",
+    "subtitle": "AI арқылы жасалған саяхат жоспарлары",
+    "inputPlaceholder": "Сіздің мінсіз күніңізді сипаттаңыз",
     "generateButton": "Жасау",
     "generating": "Жоспарлау..."
+  },
+  "videoGuides": {
+    "title": "Видео нұсқаулар",
+    "subtitle": "Қаланы қызықты видеолар арқылы танысыңыз"
+  },
+  "itineraries": {
+    "title": "Маршруттар",
+    "subtitle": "Барлық бюджетке арналған AI жасаған маршруттар"
+  },
+  "cityInsights": {
+    "title": "Қала шолуы",
+    "subtitle": "Жасырын жерлер мен жергілікті кеңестерді ашыңыз"
   }
 }
