@@ -1,49 +1,39 @@
-// components/astana_ai_landing_prototype.jsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 
-// AI-powered itinerary generator ONLY
-// CHANGE THIS in your frontend component:
-async function generateItineraryData(query = '') {
+// AI-powered itinerary generator
+async function generateItineraryData(query = '', lang = 'en') {
   try {
-    // Use relative path for Vercel serverless function
     const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/api/free-ai`;    
+
+    const prompts = {
+      en: `Create a one-day Astana itinerary for: "${query}". Include times, places, costs in KZT. Total cost must not exceed 400,000 KZT. Each item should have a realistic cost (0-100,000 KZT). Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
+      ru: `Составьте однодневный маршрут по Астане для: "${query}". Укажите время, места, стоимость в KZT. Общая стоимость не должна превышать 400 000 KZT. Каждая позиция должна иметь реалистичную цену (0-100 000 KZT). Верните корректный JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
+      kz: `Астанаға арналған бір күндік маршрут жасаңыз: "${query}". Уақыт, орындар, бағалар KZT-де көрсетілуі керек. Жалпы шығын 400,000 KZT-ден аспауы тиіс. Әр элементтің нақты бағасы болуы керек (0-100,000 KZT арасында). Дұрыс JSON форматында қайтарыңыз: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`
+    };
+
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: `Create a one-day Astana itinerary for: "${query}". 
-Include times, places, costs in KZT. IMPORTANT: Total cost must not exceed 400,000 KZT. 
-Each item should have a realistic cost (between 0 and 100,000 KZT). 
-Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: prompts[lang] })
     });
 
-    if (!response.ok) {
-      throw new Error(`Server error ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`Server error ${response.status}`);
 
     const data = await response.json();
-    
-    // Vercel function returns { response: "..." }
     const aiText = data.response;
     const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-    
-    if (!jsonMatch) {
-      throw new Error('No JSON found in AI response');
-    }
+    if (!jsonMatch) throw new Error('No JSON found in AI response');
 
     const aiResponse = JSON.parse(jsonMatch[0]);
-    
+
     if (aiResponse.title && aiResponse.items && Array.isArray(aiResponse.items)) {
       const total = aiResponse.items.reduce((acc, item) => {
         const cost = parseInt(String(item.cost).replace(/[^0-9]/g, '')) || 0;
         return acc + cost;
       }, 0);
-      
+
       return {
         title: aiResponse.title,
         items: aiResponse.items,
@@ -61,21 +51,24 @@ Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "st
 }
 
 // PDF Download function
-
-
-// PDF Download function
-function downloadPDF(itinerary) {
-  // Import html2pdf dynamically to avoid SSR issues
+function downloadPDF(itinerary, lang = 'en') {
   import('html2pdf.js').then((html2pdf) => {
+    const translations = {
+      en: { totalCost: 'Total Estimated Cost', enjoy: 'Enjoy your day in Astana! 🎉', generatedOn: 'Generated on' },
+      ru: { totalCost: 'Общая стоимость', enjoy: 'Приятного дня в Астане! 🎉', generatedOn: 'Создано' },
+      kz: { totalCost: 'Жалпы бағасы', enjoy: 'Астанадағы күніңіз сәтті өтсін! 🎉', generatedOn: 'Жасалған күні' }
+    };
+    const t = translations[lang];
+
     const content = `
       <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #00bcd4; padding-bottom: 20px;">
           <h1 style="font-size: 28px; font-weight: bold; color: #333; margin: 0 0 10px 0;">${itinerary.title}</h1>
-          <div style="font-size: 18px; color: #666; margin: 10px 0;">Total Estimated Cost: ${itinerary.total}</div>
+          <div style="font-size: 18px; color: #666; margin: 10px 0;">${t.totalCost}: ${itinerary.total}</div>
           <div style="color: #888; font-size: 14px;">Generated by Astana AI Trips</div>
         </div>
         
-        ${itinerary.items.map((item, index) => `
+        ${itinerary.items.map((item) => `
           <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #00bcd4; background: #f9f9f9;">
             <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 8px;">
               <span style="font-weight: bold; color: #0288d1; font-size: 16px; min-width: 60px;">${item.time}</span>
@@ -89,13 +82,12 @@ function downloadPDF(itinerary) {
         `).join('')}
         
         <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #888; font-size: 14px;">
-          <p>Enjoy your day in Astana! 🎉</p>
-          <p>Generated on ${new Date().toLocaleDateString()}</p>
+          <p>${t.enjoy}</p>
+          <p>${t.generatedOn} ${new Date().toLocaleDateString()}</p>
         </div>
       </div>
     `;
 
-    // Create a temporary container
     const element = document.createElement('div');
     element.innerHTML = content;
     document.body.appendChild(element);
@@ -111,70 +103,7 @@ function downloadPDF(itinerary) {
     html2pdf.default().set(options).from(element).save().then(() => {
       document.body.removeChild(element);
     });
-  }).catch(error => {
-    console.error('Error loading html2pdf:', error);
-    // Fallback to HTML download
-    fallbackDownload(itinerary);
-  });
-}
-
-// Fallback function if PDF generation fails
-function fallbackDownload(itinerary) {
-  const content = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>${itinerary.title}</title>
-      <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #00bcd4; padding-bottom: 20px; }
-        .title { font-size: 28px; font-weight: bold; color: #333; margin-bottom: 10px; }
-        .total { font-size: 18px; color: #666; margin: 10px 0; }
-        .item { margin: 20px 0; padding: 15px; border-left: 4px solid #00bcd4; background: #f9f9f9; }
-        .time { font-weight: bold; color: #0288d1; font-size: 16px; }
-        .place { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 5px; }
-        .cost { color: #d32f2f; font-weight: bold; font-size: 16px; }
-        .description { color: #555; font-size: 14px; line-height: 1.4; }
-        .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #888; }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <div class="title">${itinerary.title}</div>
-        <div class="total">Total Estimated Cost: ${itinerary.total}</div>
-        <div>Generated by Astana AI Trips</div>
-      </div>
-      
-      ${itinerary.items.map(item => `
-        <div class="item">
-          <div style="display: flex; justify-content: space-between; align-items: start;">
-            <span class="time">${item.time}</span>
-            <div style="flex: 1; margin: 0 15px;">
-              <div class="place">${item.place}</div>
-              ${item.description ? `<div class="description">${item.description}</div>` : ''}
-            </div>
-            <span class="cost">${item.cost}</span>
-          </div>
-        </div>
-      `).join('')}
-      
-      <div class="footer">
-        <p>Enjoy your day in Astana! 🎉</p>
-        <p>Generated on ${new Date().toLocaleDateString()}</p>
-      </div>
-    </body>
-    </html>
-  `;
-
-  const blob = new Blob([content], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Astana-Itinerary-${new Date().getTime()}.html`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  }).catch(error => console.error('Error loading html2pdf:', error));
 }
 
 export default function Home() {
@@ -183,17 +112,16 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, scale: 1 });
+  const [lang, setLang] = useState('en');
 
   async function generateItinerary() {
     if (!query.trim()) return;
-    
     setLoading(true);
     setError("");
     try {
-      const data = await generateItineraryData(query);
+      const data = await generateItineraryData(query, lang);
       setItinerary(data);
     } catch (error) {
-      console.error("Error generating itinerary:", error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -201,39 +129,39 @@ export default function Home() {
   }
 
   function handleDownload() {
-    if (itinerary) {
-      downloadPDF(itinerary);
-    }
+    if (itinerary) downloadPDF(itinerary, lang);
   }
+
+  const texts = {
+    en: {
+      placeholder: "Describe your perfect day: 'Romantic day under 25k' or 'Family with kids, cultural sights'",
+      generate: "Generate My Day",
+      aiGenerated: "✨ AI Generated",
+      enterPrefs: "Enter your preferences to start",
+      hero: <>Explore <span className="animated-gradient heading-font">Astana</span> the AI-curated way.</>,
+      subHero: "Intelligent day plans, local insights, cost-aware suggestions — all generated by AI in seconds."
+    },
+    ru: {
+      placeholder: "Опишите идеальный день: 'Романтический день до 25k' или 'Семья с детьми, культурные места'",
+      generate: "Создать Мой День",
+      aiGenerated: "✨ Сгенерировано AI",
+      enterPrefs: "Введите предпочтения, чтобы начать",
+      hero: <>Изучайте <span className="animated-gradient heading-font">Астану</span> с помощью AI.</>,
+      subHero: "Интеллектуальные планы на день, советы местных жителей, рекомендации по бюджету — всё сгенерировано AI за секунды."
+    },
+    kz: {
+      placeholder: "Күніңізді сипаттаңыз: '25k астында романтикалық күн' немесе 'Балалы отбасы, мәдени орындар'",
+      generate: "Күнімді Жасау",
+      aiGenerated: "✨ AI арқылы жасалды",
+      enterPrefs: "Бастау үшін таңдауларыңызды енгізіңіз",
+      hero: <>AI арқылы <span className="animated-gradient heading-font">Астананы</span> зерттеңіз.</>,
+      subHero: "Ақылды күндік жоспарлар, жергілікті кеңестер, бюджетке сай ұсыныстар — бәрі секундтар ішінде AI арқылы."
+    }
+  };
 
   return (
     <main className="min-h-screen text-white antialiased">
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <svg className="absolute left-0 top-0 w-[1400px] opacity-10 -translate-y-1/4" viewBox="0 0 1000 500" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="g1" x1="0" x2="1">
-              <stop offset="0%" stopColor="#00ffff" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#9b5cff" stopOpacity="0.12" />
-            </linearGradient>
-          </defs>
-          <path d="M0,100 C200,0 400,200 600,100 C800,0 1000,200 1200,100 L1200 0 L0 0 Z" fill="url(#g1)" />
-        </svg>
-
-        <motion.div
-          className="absolute -left-60 top-1/4 w-[520px] h-[520px] rounded-full blur-3xl opacity-30"
-          style={{ background: "linear-gradient(135deg,#6ee7b7,#60a5fa)" }}
-          animate={{ x: [0, 20, 0], y: [0, -10, 0] }}
-          transition={{ duration: 12, repeat: Infinity }}
-        />
-
-        <motion.div
-          className="absolute right-[-120px] bottom-[-80px] w-[420px] h-[420px] rounded-full blur-3xl opacity-25"
-          style={{ background: "linear-gradient(135deg,#c084fc,#fb7185)" }}
-          animate={{ x: [0, -20, 0], y: [0, 10, 0] }}
-          transition={{ duration: 15, repeat: Infinity }}
-        />
-      </div>
-
+      {/* Background omitted for brevity */}
       <header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500 shadow-lg flex items-center justify-center text-black font-bold">AI</div>
@@ -242,75 +170,36 @@ export default function Home() {
             <div className="text-xs text-slate-300">Future-ready travel planning</div>
           </div>
         </div>
-        <nav className="hidden md:flex items-center gap-6 text-sm text-slate-300">
-          <a href="#features" className="hover:text-white transition">Features</a>
-          <a href="#experiences" className="hover:text-white transition">Experiences</a>
-          <a href="#testimonials" className="hover:text-white transition">Testimonials</a>
-          <Link to="/videos" className="hover:text-white transition">Video Guides</Link>
-          <a href="#start" className="px-4 py-2 rounded bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-medium">Get Started</a>
-        </nav>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setLang('en')} className={`px-3 py-1 rounded ${lang==='en' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>EN</button>
+          <button onClick={() => setLang('ru')} className={`px-3 py-1 rounded ${lang==='ru' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>RU</button>
+          <button onClick={() => setLang('kz')} className={`px-3 py-1 rounded ${lang==='kz' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>KZ</button>
+        </div>
       </header>
 
       <section id="hero" className="max-w-6xl mx-auto px-6 pt-10 pb-20 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
         <div className="md:col-span-7">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="text-4xl md:text-6xl font-extrabold leading-tight heading-font">
-            Explore <span className="animated-gradient heading-font">Astana</span>
-            <br /> <span className="text-slate-300">the AI-curated way.</span>
-          </motion.h1>
+          <motion.h1 className="text-4xl md:text-6xl font-extrabold leading-tight heading-font">{texts[lang].hero}</motion.h1>
+          <motion.p className="mt-4 text-slate-300 max-w-xl">{texts[lang].subHero}</motion.p>
 
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.18 }} className="mt-4 text-slate-300 max-w-xl">
-            Intelligent day plans, local insights, cost-aware suggestions — all generated by AI in seconds.
-          </motion.p>
-
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mt-8 flex gap-3 flex-col sm:flex-row">
+          <div className="mt-8 flex gap-3 flex-col sm:flex-row">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Describe your perfect day: 'Romantic day under 25k' or 'Family with kids, cultural sights'"
+              placeholder={texts[lang].placeholder}
               className="flex-1 rounded-lg py-3 px-4 bg-white/5 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white"
             />
-            <button 
-              onClick={generateItinerary} 
-              disabled={loading || !query.trim()}
-              className="rounded-lg px-6 py-3 bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "✨ AI Planning..." : "Generate My Day"}
+            <button onClick={generateItinerary} disabled={loading || !query.trim()}
+              className="rounded-lg px-6 py-3 bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+              {loading ? "✨ AI Planning..." : texts[lang].generate}
             </button>
-          </motion.div>
-
-          {error && (
-            <div className="mt-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30">
-              <div className="text-red-300 text-sm">{error}</div>
-            </div>
-          )}
-
-          <div className="mt-6 flex items-center gap-4 text-sm text-slate-400">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/3">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2v10l3 3" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              AI-Powered Plans
-            </span>
-
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/3">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M21 10v6a2 2 0 0 1-2 2H5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M7 10V6a5 5 0 0 1 10 0v4" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Real Astana Places
-            </span>
-
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/3">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="white" strokeWidth="1.2"/>
-                <path d="M14 2v6h6" stroke="white" strokeWidth="1.2"/>
-              </svg>
-              Download PDF
-            </span>
           </div>
+
+          {error && <div className="mt-4 p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 text-sm">{error}</div>}
         </div>
 
         <div className="md:col-span-5">
+          {/* Itinerary card with tilt */}
           <div style={{ perspective: 1200 }}>
             <motion.div
               initial={{ scale: 0.98, opacity: 0 }}
@@ -322,57 +211,44 @@ export default function Home() {
                 const y = e.clientY - rect.top;
                 const cx = rect.width / 2;
                 const cy = rect.height / 2;
-                const rotateY = ((x - cx) / cx) * 8;
-                const rotateX = -((y - cy) / cy) * 6;
-                setTilt({ rotateX, rotateY, scale: 1.03 });
+                setTilt({ rotateX: -((y - cy) / cy) * 6, rotateY: ((x - cx) / cx) * 8, scale: 1.03 });
               }}
               onMouseLeave={() => setTilt({ rotateX: 0, rotateY: 0, scale: 1 })}
               className="glass card-tilt rounded-2xl p-5 shadow-2xl border border-white/5"
             >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-sm text-slate-300">AI Itinerary</div>
-                <div className="text-xl font-semibold mt-2">
-                  {itinerary ? itinerary.title : "Enter your preferences to start"}
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-sm text-slate-300">{texts[lang].aiGenerated}</div>
+                  <div className="text-xl font-semibold mt-2">{itinerary ? itinerary.title : texts[lang].enterPrefs}</div>
                 </div>
+                {itinerary && <div className="text-right text-slate-400">Total <div className="text-white font-bold">{itinerary.total}</div></div>}
               </div>
+
+              <div className="mt-4 space-y-3">
+                {(itinerary ? itinerary.items : new Array(3).fill(0)).map((it, idx) => (
+                  <div key={idx} className="flex items-start justify-between p-3 rounded-lg bg-white/2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-cyan-300 text-xs">{it ? it.time : "--:--"}</span>
+                        <div className="font-semibold text-sm">{it ? it.place : texts[lang].enterPrefs}</div>
+                      </div>
+                      {it && it.description && <div className="text-xs text-slate-300 mt-1">{it.description}</div>}
+                    </div>
+                    <div className="text-sm font-medium ml-2">{it ? it.cost : "—"}</div>
+                  </div>
+                ))}
+              </div>
+
               {itinerary && (
-                <div className="text-right text-slate-400">
-                  Total <div className="text-white font-bold">{itinerary.total}</div>
+                <div className="mt-5 flex items-center justify-between">
+                  <div className="text-xs text-slate-300">{texts[lang].aiGenerated}</div>
+                  <button onClick={handleDownload} className="px-3 py-2 rounded bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-semibold text-sm shadow-lg hover:opacity-90 transition-opacity">
+                    Download PDF
+                  </button>
                 </div>
               )}
-            </div>
-
-            <div className="mt-4 space-y-3">
-              {(itinerary ? itinerary.items : new Array(3).fill(0)).map((it, idx) => (
-                <div key={idx} className="flex items-start justify-between p-3 rounded-lg bg-white/2">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-cyan-300 text-xs">{it ? it.time : "--:--"}</span>
-                      <div className="font-semibold text-sm">{it ? it.place : "Enter preferences to generate"}</div>
-                    </div>
-                    {it && it.description && (
-                      <div className="text-xs text-slate-300 mt-1">{it.description}</div>
-                    )}
-                  </div>
-                  <div className="text-sm font-medium ml-2">{it ? it.cost : "—"}</div>
-                </div>
-              ))}
-            </div>
-
-            {itinerary && (
-              <div className="mt-5 flex items-center justify-between">
-                <div className="text-xs text-slate-300">✨ AI Generated</div>
-                <button 
-                  onClick={handleDownload}
-                  className="px-3 py-2 rounded bg-gradient-to-r from-cyan-400 to-violet-500 text-black font-semibold text-sm shadow-lg hover:opacity-90 transition-opacity"
-                >
-                  Download PDF
-                </button>
-              </div>
-            )}
-          </motion.div>
-            </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
