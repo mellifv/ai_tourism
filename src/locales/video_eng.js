@@ -1,4 +1,4 @@
-// src/locales/en.js
+// src/locales/video_eng.js
 export default {
   header: {
     title: "Astana AI Trips",
