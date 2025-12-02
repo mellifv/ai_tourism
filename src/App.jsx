@@ -11,8 +11,9 @@ import { LanguageProvider } from "./context/LanguageContext";
 function AppContent() {
   const location = useLocation();
   
-  // Show Nav on ALL pages EXCEPT Itineraries
-  const showNav = location.pathname !== "/itineraries";
+  // Show Nav on Home and VideoGuides only
+  // (NOT on Itineraries or CityInsights)
+  const showNav = location.pathname === "/" || location.pathname === "/videos";
   
   return (
     <>
