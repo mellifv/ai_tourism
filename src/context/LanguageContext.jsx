@@ -5,8 +5,8 @@ import React, { createContext, useState, useContext, useMemo } from 'react';
 import enTranslations from '../locales/en';
 import ruTranslations from '../locales/ru';
 import kkTranslations from '../locales/kz';
-import video_en from '../locales/video_en';
-import video_ru from '../locales/video_ru';
+import video_en from '../locales/video_eng';
+import video_ru from '../locales/video_rus';
 import video_kk from '../locales/video_kz';
 
 const LanguageContext = createContext();
