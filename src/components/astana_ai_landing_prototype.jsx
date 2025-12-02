@@ -8,8 +8,7 @@ import { Link } from 'react-router-dom';
 async function generateItineraryData(query = '') {
   try {
     // Use relative path for Vercel serverless function
-    const API_ENDPOINT = '/api/free-ai';
-    
+    const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/api/free-ai`;    
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
       headers: {
