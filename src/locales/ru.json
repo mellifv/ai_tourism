@@ -1,50 +1,19 @@
 {
   "header": {
     "title": "Astana AI Trips",
-    "subtitle": "Планирование путешествий будущего"
+    "subtitle": "Планирование путешествий"
   },
   "nav": {
     "home": "Главная",
     "videoGuides": "Видеогиды",
     "itineraries": "Маршруты",
-    "cityInsights": "Инсайты города",
-    "getStarted": "Начать"
+    "cityInsights": "Инсайты"
   },
   "hero": {
     "title": "Исследуйте Астану",
-    "subtitle": "Умные планы на день, местные советы, бюджетные предложения — всё генерируется ИИ за секунды.",
-    "inputPlaceholder": "Опишите ваш идеальный день: 'Романтический день до 25к' или 'Семья с детьми, культурные достопримечательности'",
-    "generateButton": "Создать мой день",
-    "generating": "✨ ИИ планирует...",
-    "features": {
-      "aiPlans": "Планы от ИИ",
-      "realPlaces": "Реальные места Астаны",
-      "downloadPDF": "Скачать PDF"
-    }
-  },
-  "itinerary": {
-    "aiItinerary": "Маршрут от ИИ",
-    "enterPreferences": "Введите предпочтения, чтобы начать",
-    "total": "Итого",
-    "aiGenerated": "✨ Создано ИИ",
-    "downloadPDF": "Скачать PDF"
-  },
-  "footer": {
-    "copyright": "© {year} Astana AI Trips",
-    "privacy": "Конфиденциальность",
-    "terms": "Условия",
-    "contact": "Контакты"
-  },
-  "videoGuides": {
-    "title": "Видеогиды",
-    "description": "Смотрите полезные видео об Астане"
-  },
-  "itineraries": {
-    "title": "Маршруты",
-    "description": "Просматривайте готовые маршруты"
-  },
-  "cityInsights": {
-    "title": "Инсайты города",
-    "description": "Узнайте о культуре и истории Астаны"
+    "subtitle": "Планы от ИИ",
+    "inputPlaceholder": "Опишите ваш день",
+    "generateButton": "Создать",
+    "generating": "Планирование..."
   }
 }
