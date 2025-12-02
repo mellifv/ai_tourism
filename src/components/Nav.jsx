@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
+import { useLanguage } from '../context/LanguageContext'; // Add this
+import LanguageSelector from './LanguageSelector';
 export default function Nav() {
+   const { t } = useLanguage(); // Add this
   const location = useLocation();
   return (
     <nav className="w-full bg-white/5 backdrop-blur-sm border-b border-white/5">
