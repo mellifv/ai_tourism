@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import ThreeScene from '../components/ThreeScene';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 import LanguageSelect from '../components/LanguageSelect';
 
 // Leaflet marker fix omitted for brevity...
