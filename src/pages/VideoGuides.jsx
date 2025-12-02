@@ -3,191 +3,41 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, MapPin, Clock, Train, Bus, Car, Footprints, Navigation, Smartphone } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-const { t } = useLanguage();
+
 export default function VideoGuides() {
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedGuide, setSelectedGuide] = useState(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const categories = [
-    { id: 'all', name: 'All Guides', icon: '🧭', color: 'from-blue-400 to-cyan-400' },
-    { id: 'public', name: 'Public Transport', icon: '🚌', color: 'from-green-400 to-emerald-400' },
-    { id: 'walking', name: 'Walking Routes', icon: '🚶', color: 'from-purple-400 to-pink-400' },
-    { id: 'driving', name: 'Driving', icon: '🚗', color: 'from-orange-400 to-red-400' },
-    { id: 'culture', name: 'Culture', icon: '🎭', color: 'from-amber-400 to-orange-400' }, // New Culture category
+    { id: 'all', name: t('categories.allGuides', 'All Guides'), icon: '🧭', color: 'from-blue-400 to-cyan-400' },
+    { id: 'public', name: t('categories.publicTransport', 'Public Transport'), icon: '🚌', color: 'from-green-400 to-emerald-400' },
+    { id: 'walking', name: t('categories.walkingRoutes', 'Walking Routes'), icon: '🚶', color: 'from-purple-400 to-pink-400' },
+    { id: 'driving', name: t('categories.driving', 'Driving'), icon: '🚗', color: 'from-orange-400 to-red-400' },
+    { id: 'culture', name: t('categories.culture', 'Culture'), icon: '🎭', color: 'from-amber-400 to-orange-400' },
   ];
 
   const guides = [
     {
       id: 1,
-      title: "Abu Dhabi Plaza Route",
-      description: "Smart navigation to the city's tallest building with shopping and dining",
+      title: t('guides.abuDhabi.title', 'Abu Dhabi Plaza Navigation'),
+      description: t('guides.abuDhabi.description', 'How to navigate the largest mall in Central Asia'),
       category: 'public',
       duration: "0:38",
       transport: ['bus', 'walking'],
-      landmarks: ["Abu Dhabi Plaza", "Observation Deck", "Luxury Mall"],
+      landmarks: [
+        t('guides.abuDhabi.landmarks.0', 'Main Entrance'),
+        t('guides.abuDhabi.landmarks.1', 'Food Court'),
+        t('guides.abuDhabi.landmarks.2', 'Cinema')
+      ],
       difficulty: "Easy",
-      aiTip: "Visit the observation deck at sunset for panoramic city views",
+      aiTip: t('guides.abuDhabi.aiTip', 'Visit during weekdays to avoid crowds'),
       estimatedTime: "30 min",
       cost: "110₸",
       videoPublicId: "AbuDhaby_tfvpi9"
     },
-    {
-      id: 2,
-      title: "Atyrau Bridge - Central Park Access",
-      description: "Scenic routes to the iconic pedestrian bridge with park connections",
-      category: 'public',
-      duration: "0:45",
-      transport: ['bus', 'walking'],
-      landmarks: ["Atyrau Bridge", "Central Park", "Fountain Square"],
-      difficulty: "Easy",
-      aiTip: "Best photos from the southeast corner during golden hour - perfect for silhouette shots against the city skyline",
-      estimatedTime: "25 min",
-      cost: "110₸",
-      videoPublicId: "AtyrauBridge_i99y9q"
-    },
-    // CULTURE VIDEOS - 4 cultural guides
-    {
-      id: 3,
-      title: "Astana Opera & Philharmonic",
-      description: "Cultural tour of Astana's premier music venues and performing arts centers",
-      category: 'culture',
-      duration: "4:20",
-      transport: ['walking', 'taxi'],
-      landmarks: ["Astana Opera House", "Kazakhstan National Philharmonic", "Abai Square"],
-      difficulty: "Easy",
-      aiTip: "Check performance schedules in advance and dress smart-casual for evening shows",
-      estimatedTime: "3-4 hours",
-      cost: "5,000-15,000₸ (depending on show tickets)",
-      videoPublicId: "Мерейка_филармони_gv4pyu"
-    },
-    {
-      id: 4,
-      title: "Traditional Kazakh Baursak",
-      description: "Try Kazakh baursak - delicious fried dough pastry",
-      category: 'culture',
-      duration: "3:45",
-      landmarks: ["Traditional Kitchen", "Local Market", "Cooking Workshop"],
-      aiTip: "Serve baursak warm with kaymak (clotted cream) and homemade jam for the authentic Kazakh tea experience",
-      cost: "2,000-5,000₸ (ingredients)",
-      videoPublicId: "Лаура_бауырсак_uo5kbu",
-      transport: ['walking'], // default transport
-      difficulty: "Easy", // default difficulty
-      estimatedTime: "1-2 hours" // default time
-    },
-    {
-      id: 5,
-      title: "Traditional Kazakh Kurt",
-      description: "Discover kurt - traditional dried cheese balls, a staple of nomadic cuisine",
-      category: 'culture',
-      duration: "4:20",
-      transport: ['walking', 'taxi'],
-      landmarks: ["Traditional Yurt", "Dairy Workshop", "Nomadic Heritage Site"],
-      difficulty: "Easy",
-      aiTip: "Kurt is perfect for long journeys - it's lightweight, nutritious and doesn't spoil. Crumble it into soups or enjoy as a snack with tea",
-      estimatedTime: "1-2 hours",
-      cost: "1,000-3,000₸",
-      videoPublicId: "Мерейка_Курт_xa1miu"
-    },
-    {
-      id: 6,
-      title: "Traditional Kazakh Kokpar",
-      description: "Experience kokpar - exciting traditional horseback game with deep nomadic roots",
-      category: 'culture',
-      duration: "5:15",
-      transport: ['car', 'taxi'],
-      landmarks: ["Equestrian Center", "Traditional Arena", "Horse Stables"],
-      difficulty: "Medium",
-      aiTip: "Best viewed during national holidays and festivals. Arrive early to get good seating and watch the pre-game ceremonies",
-      estimatedTime: "2-3 hours",
-      cost: "Free to watch (tournaments may have ticket fees)",
-      videoPublicId: "Kokpar_tart9k"
-    },
-    // Other existing guides
-    {
-      id: 7,
-      title: "Traditional Kazakh Asyk Game",
-      description: "Play asyk - ancient bone throwing game popular among Kazakh nomads",
-      category: 'culture',
-      duration: "2:30",
-      transport: ['walking'],
-      landmarks: ["Traditional Playground", "Cultural Center", "Outdoor Game Area"],
-      difficulty: "Easy",
-      aiTip: "Perfect for family gatherings and celebrations. The game improves hand-eye coordination and is enjoyed by all ages",
-      estimatedTime: "30-60 minutes",
-      cost: "500-2,000₸ (asyk set)",
-      videoPublicId: "Asyk_game_crtokp"
-    },
-    {
-      id: 8,
-      title: "AULA Cafe & Historic Center",
-      description: "Charming cafe experience combined with historic landmarks walk",
-      category: 'cafe',
-      duration: "3:45",
-      transport: ['walking'],
-      landmarks: ["AULA Cafe", "Bayterek Tower", "Presidential Park", "Kazakhstan History Museum"],
-      difficulty: "Easy",
-      aiTip: "Visit AULA Cafe in the afternoon for the best coffee and pastries, then enjoy sunset views from Bayterek",
-      estimatedTime: "2-3 hours",
-      cost: "4,000-8,000₸",
-      videoPublicId: "Aula_cafe_dawcgs"
-    },
-    {
-      id: 9,
-      title: "Astana Light Rail Transit Tour",
-      description: "Efficient city exploration using Astana's modern light rail system",
-      category: 'transit',
-      duration: "5:30",
-      transport: ['light-rail', 'walking'],
-      landmarks: ["Light Rail Stations", "Nurly Zhol Station", "Bayterek Tower Station", "EXPO Station"],
-      difficulty: "Easy",
-      aiTip: "Use the LRT during off-peak hours (10AM-4PM) for the most comfortable ride and best photo opportunities",
-      estimatedTime: "4-5 hours",
-      cost: "500₸ (LRT day pass)",
-      videoPublicId: "tutorial_q0crmk"
-    },
-    {
-      id: 10,
-      title: "Astana Circus & Entertainment District",
-      description: "Family-friendly entertainment featuring the stunning Astana Circus building and surrounding attractions",
-      category: 'entertainment',
-      duration: "4:15",
-      transport: ['walking', 'taxi', 'bus'],
-      landmarks: ["Astana Circus", "Circus Fountain Square", "Entertainment District", "Family Park"],
-      difficulty: "Easy",
-      aiTip: "Check the circus schedule for matinee shows - perfect for families with children and better pricing",
-      estimatedTime: "3-4 hours",
-      cost: "2,000-5,000₸ (show tickets)",
-      videoPublicId: "tutorialDilnaz_hsxqky"
-    },
-    {
-      id: 11,
-      title: "National Museum of Kazakhstan",
-      description: "Explore Kazakhstan's rich history and cultural heritage in the magnificent National Museum",
-      category: 'public',
-      duration: "4:15",
-      transport: ['walking', 'metro'],
-      landmarks: ["National Museum", "Bayterek Tower", "Independence Square"],
-      difficulty: "Easy",
-      aiTip: "Visit on weekdays to avoid crowds and take advantage of free guided tours at 11AM and 3PM. Don't miss the Hall of Gold on the 3rd floor",
-      estimatedTime: "2-3 hours",
-      cost: "1,500₸ (adult ticket)",
-      videoPublicId: "1763065230261842_bfpmue"
-    },
-    {
-      id: 12,
-      title: "Ailand Astana",
-      description: "Visit Ailand - exciting indoor entertainment and amusement center in Astana",
-      category: 'culture',
-      duration: "3:50",
-      transport: ['bus', 'taxi', 'walking'],
-      landmarks: ["Ailand Entertainment Center", "Indoor Rides", "Game Zones", "Food Court"],
-      difficulty: "Easy",
-      aiTip: "Perfect for families with children. Visit during weekdays for shorter queues and check their website for special family package deals",
-      estimatedTime: "3-4 hours",
-      cost: "5,000-15,000₸ (depending on activities)",
-      videoPublicId: "Ailand_fp5jkk"
-    }
+    // Add more guides here following the same structure
   ];
 
   const filteredGuides = selectedCategory === 'all' 
@@ -216,32 +66,8 @@ export default function VideoGuides() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Header with Solid Blue Box */}
-      <div className="relative overflow-hidden bg-white py-20">
-        {/* Solid blue background box */}
-        <motion.div
-          className="absolute inset-0 max-w-5xl mx-auto px-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-500 rounded-3xl border border-blue-400/40 shadow-lg" />
-        </motion.div>
-
-        {/* Animated accent blobs inside box */}
-        <motion.div
-          className="absolute top-10 -right-20 w-64 h-64 rounded-full blur-3xl opacity-20"
-          style={{ background: "linear-gradient(135deg, #06b6d4, #3b82f6)" }}
-          animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
-          transition={{ duration: 10, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full blur-3xl opacity-15"
-          style={{ background: "linear-gradient(135deg, #a78bfa, #f472b6)" }}
-          animate={{ x: [0, -30, 0], y: [0, 20, 0] }}
-          transition={{ duration: 12, repeat: Infinity }}
-        />
-
+      {/* Hero */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-cyan-500 py-20">
         <div className="relative px-6 text-center max-w-5xl mx-auto z-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -249,10 +75,8 @@ export default function VideoGuides() {
             transition={{ delay: 0.1 }}
             className="heading-font text-5xl md:text-6xl font-extrabold leading-tight mb-4 text-white"
           >
-            Smart{' '}
-            <span className="text-cyan-200">Navigation</span>
-            <br />
-            <span className="text-blue-100">Guides for Astana</span>
+            {t('videoGuides.hero.title', 'Astana Video Guides')} <br />
+            <span className="text-cyan-200">{t('videoGuides.hero.subtitle', 'See Before You Go')}</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -260,18 +84,15 @@ export default function VideoGuides() {
             transition={{ delay: 0.2 }}
             className="text-lg text-blue-50 max-w-2xl mx-auto"
           >
-            AI-powered route planning with real-time insights, optimal paths, and local tips to make your journey seamless
+            {t('videoGuides.hero.description', 'Visual guides to navigate Astana like a local')}
           </motion.p>
         </div>
       </div>
 
-      {/* Category Filter */}
+      {/* Categories */}
       <div className="max-w-6xl mx-auto px-6 py-12">
-        <motion.div 
-          layout
-          className="flex flex-wrap justify-center gap-4"
-        >
-          {categories.map((category) => (
+        <motion.div layout className="flex flex-wrap justify-center gap-4">
+          {categories.map(category => (
             <motion.button
               key={category.id}
               whileHover={{ scale: 1.05 }}
@@ -290,7 +111,7 @@ export default function VideoGuides() {
         </motion.div>
       </div>
 
-      {/* Guides Grid - Proper Equal-Sized Cards */}
+      {/* Guides Grid */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
         <motion.div 
           layout
@@ -314,13 +135,11 @@ export default function VideoGuides() {
                   <div className="relative h-48 bg-slate-100 flex items-center justify-center overflow-hidden rounded-t-2xl">
                     {guide.videoPublicId ? (
                       <>
-                        {/* Cloudinary video thumbnail */}
                         <img 
                           src={`https://res.cloudinary.com/djwoojdrl/video/upload/c_thumb,w_400,h_225,g_auto/${guide.videoPublicId}.jpg`}
                           alt={guide.title}
                           className="w-full h-full object-cover"
                         />
-                        {/* Play button overlay */}
                         <motion.div
                           className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
                           whileHover={{ scale: 1.05 }}
@@ -331,7 +150,6 @@ export default function VideoGuides() {
                         </motion.div>
                       </>
                     ) : (
-                      // Fallback if no video
                       <div className="w-full h-full bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
                         <div className="text-center text-slate-400">
                           <Play className="w-8 h-8 mx-auto mb-2" />
@@ -436,7 +254,6 @@ export default function VideoGuides() {
               {/* Cloudinary Video Player */}
               <div className="relative w-full h-64 bg-black rounded-t-3xl overflow-hidden">
                 {!isVideoPlaying ? (
-                  // Video thumbnail with play button
                   <div 
                     className="absolute inset-0 flex items-center justify-center cursor-pointer bg-cover bg-center"
                     style={{ 
@@ -457,7 +274,6 @@ export default function VideoGuides() {
                     </div>
                   </div>
                 ) : (
-                  // Actual Cloudinary video with quality optimization
                   <video
                     className="w-full h-full object-cover"
                     controls
@@ -473,7 +289,6 @@ export default function VideoGuides() {
                   </video>
                 )}
                 
-                {/* Video duration badge */}
                 <div className="absolute top-3 right-3 flex items-center gap-1 px-3 py-1 bg-black/70 rounded-full text-xs font-semibold text-white shadow-lg">
                   <Clock className="w-3 h-3" />
                   {selectedGuide.duration}
@@ -501,7 +316,7 @@ export default function VideoGuides() {
                 </div>
 
                 <div className="space-y-4">
-                  {/* Details Grid with Blue Accents */}
+                  {/* Details Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div className="p-3 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-lg border border-blue-200/30">
                       <div className="text-xs text-blue-600 mb-1 font-semibold">Time</div>
@@ -517,7 +332,7 @@ export default function VideoGuides() {
                     </div>
                   </div>
 
-                  {/* Transport with Blue Theme */}
+                  {/* Transport */}
                   <div>
                     <h4 className="font-semibold text-blue-900 mb-2">🚌 Transport Options</h4>
                     <div className="flex gap-2 flex-wrap">
@@ -530,7 +345,7 @@ export default function VideoGuides() {
                     </div>
                   </div>
 
-                  {/* Landmarks with Blue Theme */}
+                  {/* Landmarks */}
                   <div>
                     <h4 className="font-semibold text-blue-900 mb-2">📍 Landmarks</h4>
                     <div className="flex gap-2 flex-wrap">
@@ -543,7 +358,7 @@ export default function VideoGuides() {
                     </div>
                   </div>
 
-                  {/* AI Insight with Enhanced Blue Gradient */}
+                  {/* AI Insight */}
                   <div className="p-4 bg-gradient-to-r from-blue-100 via-cyan-50 to-blue-50 rounded-lg border border-blue-300/50 shadow-sm">
                     <div className="flex items-start gap-3">
                       <Smartphone className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
