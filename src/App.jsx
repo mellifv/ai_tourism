@@ -5,14 +5,12 @@ import VideoGuides from "./pages/VideoGuides";
 import Itineraries from "./pages/Itineraries";
 import CityInsights from "./pages/CityInsights";
 import Nav from "./components/Nav";
-import { LanguageProvider } from "./context/LanguageContext";
+// Remove LanguageProvider import from here since it's already in main.jsx
 
-// Create a wrapper component to conditionally show Nav
 function AppContent() {
   const location = useLocation();
   
   // Show Nav on Home and VideoGuides only
-  // (NOT on Itineraries or CityInsights)
   const showNav = location.pathname === "/" || location.pathname === "/videos";
   
   return (
@@ -30,10 +28,9 @@ function AppContent() {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </LanguageProvider>
+    // Remove LanguageProvider wrapper here
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
