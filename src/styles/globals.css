@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-900 text-white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold;
+}
+
+p {
+  @apply text-gray-300;
+}
+
+a {
+  @apply text-cyan-400 hover:text-cyan-300;
+}
+
+:root {
+  --bg: #060611;
+  --surface-rgba: 255 255 255;
+  --glass-border: 255 255 255 / 0.06;
+  --accent-1: 34 211 238; /* cyan */
+  --accent-2: 139 92 246; /* violet */
+  --gradient-1: linear-gradient(90deg, rgba(var(--accent-1),1), rgba(var(--accent-2),1));
+}
+
+html, body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: radial-gradient(ellipse at top right, #020617 0%, #05051a 40%, #060611 100%);
+}
+
+.heading-font {
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.animated-gradient {
+  background: linear-gradient(90deg, rgba(var(--accent-1),1), rgba(var(--accent-2),1));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-size: 200% 200%;
+  animation: gradientShift 6s linear infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.glass {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(var(--surface-rgba),0.06);
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  backdrop-filter: blur(8px) saturate(120%);
+}
+
+.card-tilt {
+  transform-origin: center;
+  will-change: transform;
+}
+
+.cta-button {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.cta-button:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+
+/* Lighter blue palette tweaks for Home landing */
+.home-hero-overlay {
+  background: linear-gradient(180deg, rgba(59,130,246,0.75), rgba(56,189,248,0.25));
+}
+
+.feature-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Add to your existing globals.css */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+.gold-border {
+  border: 2px solid linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+}
