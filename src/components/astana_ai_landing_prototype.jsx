@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 
 // AI-powered itinerary generator ONLY
+// CHANGE THIS in your frontend component:
 async function generateItineraryData(query = '') {
   try {
-    // Get API URL from environment variable with fallback
-    const API_BASE = import.meta.env.VITE_API_URL || 'https://aitourism-production.up.railway.app';
-    const API_ENDPOINT = `${API_BASE}/api/free-ai`;
+    // Use relative path for Vercel serverless function
+    const API_ENDPOINT = '/api/free-ai';
     
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
@@ -16,7 +16,9 @@ async function generateItineraryData(query = '') {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        prompt: query
+        prompt: `Create a one-day Astana itinerary for: "${query}". 
+Include times, places, costs in KZT. 
+Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`
       })
     });
 
@@ -25,12 +27,8 @@ async function generateItineraryData(query = '') {
     }
 
     const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.error || 'Backend request failed');
-    }
-
-    // Parse AI response
+    
+    // Vercel function returns { response: "..." }
     const aiText = data.response;
     const jsonMatch = aiText.match(/\{[\s\S]*\}/);
     
