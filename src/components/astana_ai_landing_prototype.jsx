@@ -5,32 +5,85 @@ import { Link } from 'react-router-dom';
 // AI-powered itinerary generator
 async function generateItineraryData(query = '', lang = 'en') {
   try {
-   const API_ENDPOINT = `/api/free-ai`;
-
+    // IMPORTANT: Use the correct endpoint
+    const API_ENDPOINT = '/api/gemini'; // Changed from /api/free-ai
+    
+    // Simplified prompt that works better
     const prompts = {
-      en: `Create a one-day Astana itinerary for: "${query}". Include times, places, costs in KZT. Total cost must not exceed 400,000 KZT. Each item should have a realistic cost (0-100,000 KZT). Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
-      ru: `Составьте однодневный маршрут по Астане для: "${query}". Укажите время, места, стоимость в KZT. Общая стоимость не должна превышать 400 000 KZT. Каждая позиция должна иметь реалистичную цену (0-100 000 KZT). Верните корректный JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
-      kz: `Астанаға арналған бір күндік маршрут жасаңыз: "${query}". Уақыт, орындар, бағалар KZT-де көрсетілуі керек. Жалпы шығын 400,000 KZT-ден аспауы тиіс. Әр элементтің нақты бағасы болуы керек (0-100,000 KZT арасында). Дұрыс JSON форматында қайтарыңыз: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`
+      en: `Create a one-day Astana itinerary for: "${query}". 
+           Format as JSON: {
+             "title": "string",
+             "items": [
+               {"time": "9:00 AM", "place": "Place Name", "cost": "5000₸", "description": "Brief description"}
+             ]
+           }
+           Total budget: 400,000₸ max.`,
+      ru: `Создай однодневный маршрут по Астане для: "${query}".
+           Формат JSON: {
+             "title": "string",
+             "items": [
+               {"time": "9:00", "place": "Название места", "cost": "5000₸", "description": "Краткое описание"}
+             ]
+           }
+           Бюджет: максимум 400,000₸.`,
+      kz: `Астанаға бір күндік маршрут жаса: "${query}".
+           JSON пішімі: {
+             "title": "string",
+             "items": [
+               {"time": "9:00", "place": "Орын атауы", "cost": "5000₸", "description": "Қысқа сипаттама"}
+             ]
+           }
+           Бюджет: ең көбі 400,000₸.`
     };
 
+    console.log('📤 Sending request to:', API_ENDPOINT);
+    console.log('📝 Prompt:', prompts[lang].substring(0, 100) + '...');
+    
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: prompts[lang] })
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ 
+        prompt: prompts[lang]
+      })
     });
 
-    if (!response.ok) throw new Error(`Server error ${response.status}`);
+    console.log('📥 Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Server error response:', errorText);
+      throw new Error(`Server error ${response.status}`);
+    }
 
     const data = await response.json();
+    console.log('📦 Response data:', data);
+    
+    if (!data.success) {
+      throw new Error(data.error || 'API request failed');
+    }
+    
     const aiText = data.response;
-    const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('No JSON found in AI response');
-
-    const aiResponse = JSON.parse(jsonMatch[0]);
+    console.log('🤖 AI Response:', aiText);
+    
+    // Try to extract JSON
+    let jsonMatch = aiText.match(/```json\n([\s\S]*?)\n```/) || 
+                   aiText.match(/\{[\s\S]*\}/);
+    
+    if (!jsonMatch) {
+      console.error('No JSON found in:', aiText);
+      throw new Error('No valid JSON in AI response');
+    }
+    
+    const jsonStr = jsonMatch[0].replace(/```json\n|\n```/g, '');
+    const aiResponse = JSON.parse(jsonStr);
 
     if (aiResponse.title && aiResponse.items && Array.isArray(aiResponse.items)) {
+      // Calculate total
       const total = aiResponse.items.reduce((acc, item) => {
-        const cost = parseInt(String(item.cost).replace(/[^0-9]/g, '')) || 0;
+        const cost = parseInt(item.cost?.replace(/[^0-9]/g, '')) || 0;
         return acc + cost;
       }, 0);
 
@@ -41,12 +94,12 @@ async function generateItineraryData(query = '', lang = 'en') {
         source: 'ai'
       };
     } else {
-      throw new Error('Invalid itinerary format from AI');
+      throw new Error('Invalid itinerary format');
     }
 
   } catch (error) {
-    console.error('API error:', error);
-    throw new Error(`Failed to generate itinerary: ${error.message}`);
+    console.error('💥 API error:', error);
+    throw new Error(`Failed to generate: ${error.message}`);
   }
 }
 
