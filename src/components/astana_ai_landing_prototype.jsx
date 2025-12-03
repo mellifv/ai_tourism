@@ -2,7 +2,40 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 
-
+// Helper: extract numeric budget from query
+function extractBudget(query) {
+  const queryLower = query.toLowerCase().trim();
+  
+  // Remove any non-digit/letter characters (except k, m, and . for decimals)
+  const cleanQuery = queryLower.replace(/[^\dk\sm.]/g, '');
+  
+  // Match patterns like: "50k", "25 k", "100000", "1.5k", "2m", "2.5 m", "25,000"
+  const match = cleanQuery.match(/(\d+(?:\.\d+)?)\s*([km])?/);
+  
+  if (!match) {
+    // Try to find any number in the original query
+    const fallbackMatch = query.match(/(\d+)/);
+    if (fallbackMatch) {
+      const num = parseInt(fallbackMatch[1]);
+      console.log("Fallback extraction:", num);
+      return num;
+    }
+    return null; // No budget found
+  }
+  
+  let num = parseFloat(match[1]);
+  const unit = match[2];
+  
+  // Apply multiplier based on unit
+  if (unit === 'k') {
+    num *= 1000;
+  } else if (unit === 'm') {
+    num *= 1000000;
+  }
+  
+  console.log("Extracted budget:", num, "from query:", query);
+  return num;
+}
 async function generateItineraryData(query = '', lang = 'en') {
   try {
     const API_ENDPOINT = '/api/gemini';
