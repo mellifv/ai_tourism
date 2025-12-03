@@ -45,11 +45,7 @@ export default async function handler(req, res) {
     }
     
     // Try different model names
-    const modelNames = [
-      "gemini-2.5-pro-latest",
-      "gemini-2.5-flash-latest", 
-      "gemini-pro"
-    ];
+    const modelNames = "gemini-2.0-pro-latest";
     
     const modelName = modelNames[0]; // Start with first one
     console.log("Using model:", modelName);
