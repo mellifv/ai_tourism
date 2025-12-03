@@ -8,6 +8,8 @@ import Nav from "./components/Nav";
 
 function AppContent() {
   const location = useLocation();
+
+  
   
   // Show Nav on ALL pages EXCEPT Itineraries
   const showNav = !location.pathname.startsWith("/itineraries");
