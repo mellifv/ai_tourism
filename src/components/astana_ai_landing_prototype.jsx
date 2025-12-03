@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 // AI-powered itinerary generator
 async function generateItineraryData(query = '', lang = 'en') {
   try {
-    const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/api/free-ai`;    
+   const API_ENDPOINT = `/api/free-ai`;
 
     const prompts = {
       en: `Create a one-day Astana itinerary for: "${query}". Include times, places, costs in KZT. Total cost must not exceed 400,000 KZT. Each item should have a realistic cost (0-100,000 KZT). Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
@@ -162,7 +162,6 @@ export default function Home() {
   return (
     <main className="min-h-screen text-white antialiased">
       {/* Background omitted for brevity */}
-// Add this inside your Itineraries.jsx header section:
       <header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
   <div className="flex items-center gap-3">
     {/* Logo/Brand - make it clickable */}
