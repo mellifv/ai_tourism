@@ -19,6 +19,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing prompt' });
     }
 
+    // DEBUG: log API key and prompt
+    console.log("GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
+    console.log("Prompt:", prompt);
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
@@ -33,76 +37,35 @@ export default async function handler(req, res) {
         }),
       }
     );
-try {
-  const { prompt } = req.body;
 
-  if (!prompt) {
-    return res.status(400).json({ error: 'Missing prompt' });
-  }
+    // DEBUG: log raw status
+    console.log("Gemini API status:", response.status);
 
-  // DEBUG: log API key and prompt
-  console.log("GEMINI_API_KEY:", !!process.env.GEMINI_API_KEY);
-  console.log("Prompt:", prompt);
-
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
-      }),
-    }
-  );
-
-  // DEBUG: log raw status
-  console.log("Gemini API status:", response.status);
-
-  const textRaw = await response.text(); // get raw text even if not JSON
-  console.log("Gemini raw response:", textRaw);
-
-  if (!response.ok) {
-    throw new Error(`API responded with status ${response.status}`);
-  }
-
-  const data = JSON.parse(textRaw);
-
-  if (!data.candidates || !data.candidates[0]) {
-    throw new Error('No AI response');
-  }
-
-  const text = data.candidates[0].content.parts[0].text;
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  return res.status(200).json({ success: true, response: text });
-
-} catch (err) {
-  console.error('API Error:', err);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  return res.status(500).json({ success: false, error: err.message });
-}
+    const textRaw = await response.text(); // get raw text even if not JSON
+    console.log("Gemini raw response:", textRaw);
 
     if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
+      throw new Error(`Gemini API responded with status ${response.status}: ${textRaw}`);
     }
 
-    const data = await response.json();
+    const data = JSON.parse(textRaw);
 
     if (!data.candidates || !data.candidates[0]) {
-      throw new Error('No AI response');
+      throw new Error('No AI response in candidates');
     }
 
     const text = data.candidates[0].content.parts[0].text;
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     return res.status(200).json({ success: true, response: text });
+
   } catch (err) {
-    console.error('API Error:', err);
+    console.error('API Error:', err.message);
     res.setHeader('Access-Control-Allow-Origin', '*');
-    return res.status(500).json({ success: false, error: err.message });
+    return res.status(500).json({ 
+      success: false, 
+      error: err.message,
+      note: 'Check Vercel environment variables and logs' 
+    });
   }
 }
