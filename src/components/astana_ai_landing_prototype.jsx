@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
-// Helper: extract numeric budget from query
-function extractBudget(query) {
-  const numbers = query.match(/\d+/g);
-  if (!numbers) return 400000; // fallback
-  const num = parseInt(numbers.join(''), 10);
-  return Math.min(num, 400000); // hard cap safeguard
-}
+
 
 async function generateItineraryData(query = '', lang = 'en') {
   try {
@@ -16,59 +10,85 @@ async function generateItineraryData(query = '', lang = 'en') {
     // Extract budget from user query
     const userBudget = extractBudget(query);
 
-    const prompts = {
-      en: `Create a one-day Astana itinerary for the request: "${query}". 
+const prompts = {
+  en: `Create a one-day Astana itinerary for the request: "${query}". 
 The MAXIMUM TOTAL COST must NOT exceed ${userBudget} KZT. 
 This budget limit is absolute — DO NOT exceed it.
 
-Rules:
-- Each item must include realistic, local Astana prices.
-- Each item cost must be between 0–100,000 KZT.
-- The itinerary must be optimized to fit the user's budget.
-- If the user's idea seems expensive, create budget-friendly alternatives that still match the vibe.
-- Return ONLY valid JSON in this exact structure:
+IMPORTANT COST FORMATTING RULES:
+- All costs MUST be in KZT (Kazakhstani Tenge)
+- Format costs like: "5,000₸", "15,000₸", "1,500₸"
+- NEVER use "50₸" for activities (unrealistic)
+- Each item cost must be between 1,000–100,000 KZT (realistic prices)
+- The sum of ALL items must be close to but not exceed ${userBudget} KZT
+- Include a mix of free and paid activities to fit the budget
+
+Return ONLY valid JSON in this exact structure:
 
 {
   "title": "string",
   "items": [
-    { "time": "string", "place": "string", "cost": "string", "description": "string" }
+    { 
+      "time": "string (e.g., 9:00 AM)", 
+      "place": "string", 
+      "cost": "string (e.g., 5,000₸)", 
+      "description": "string" 
+    }
   ]
 }`,
-      
-      ru: `Составьте однодневный маршрут по Астане по запросу: "${query}". 
+  
+  ru: `Составьте однодневный маршрут по Астане по запросу: "${query}". 
 МАКСИМАЛЬНАЯ ОБЩАЯ СТОИМОСТЬ НЕ ДОЛЖНА ПРЕВЫШАТЬ ${userBudget} KZT. 
 Этот бюджет обязателен — не превышать его.
 
-Правила:
-- Реалистичные местные цены.
-- Цена каждого пункта 0–100,000 KZT.
-- Маршрут должен вписываться в бюджет.
-- Верните корректный JSON строго в формате:
+ВАЖНЫЕ ПРАВИЛА ФОРМАТИРОВАНИЯ ЦЕН:
+- Все цены в KZT (казахстанских тенге)
+- Формат: "5,000₸", "15,000₸", "1,500₸"
+- НИКОГДА не используйте "50₸" для мероприятий (нереально)
+- Цена каждого пункта: 1,000–100,000 KZT
+- Сумма всех пунктов должна быть близка к ${userBudget} KZT, но не превышать
+- Включите бесплатные и платные мероприятия
+
+Верните корректный JSON строго в формате:
 
 {
   "title": "string",
   "items": [
-    { "time": "string", "place": "string", "cost": "string", "description": "string" }
+    { 
+      "time": "string (например, 9:00)", 
+      "place": "string", 
+      "cost": "string (например, 5,000₸)", 
+      "description": "string" 
+    }
   ]
 }`,
-      
-      kz: `Астанаға арналған "${query}" сұрауы бойынша бір күндік маршрут құрыңыз. 
+  
+  kz: `Астанаға арналған "${query}" сұрауы бойынша бір күндік маршрут құрыңыз. 
 ЖАЛПЫ БЮДЖЕТ ${userBudget} KZT-ден АСПАУЫ ТИІС ЕМЕС. 
 Бюджет қатаң — ешқашан асырмаңыз.
 
-Ережелер:
-- Нақты, шынайы Астана бағалары.
-- Әр элемент 0–100,000 KZT аралығында.
-- Бюджетке сай нұсқа беріңіз.
-- Төмендегі JSON форматын ДӘЛ қайтарыңыз:
+БАҒАЛАРДЫ ҚАЛЫПТАСТЫРУ ЕРЕЖЕЛЕРІ:
+- Барлық бағалар KZT (теңге)
+- Формат: "5,000₸", "15,000₸", "1,500₸"
+- ЕШҚАШАН "50₸" қолданбаңыз (шындыққа жанаспайды)
+- Әр элемент: 1,000–100,000 KZT аралығында
+- Барлық элементтердің қосындысы ${userBudget} KZT-ге жақын болуы керек, бірақ аспауы керек
+- Ақылы және тегін іс-шараларды қосыңыз
+
+Төмендегі JSON форматын ДӘЛ қайтарыңыз:
 
 {
   "title": "string",
   "items": [
-    { "time": "string", "place": "string", "cost": "string", "description": "string" }
+    { 
+      "time": "string (мысалы, 9:00)", 
+      "place": "string", 
+      "cost": "string (мысалы, 5,000₸)", 
+      "description": "string" 
+    }
   ]
 }`
-    };
+};
 
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
