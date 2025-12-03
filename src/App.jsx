@@ -9,7 +9,8 @@ import Nav from "./components/Nav";
 function AppContent() {
   const location = useLocation();
   
-  const showNav = location.pathname === "/" || location.pathname === "/videos" || location.pathname === "/insights";
+  // Show Nav on ALL pages EXCEPT Itineraries
+  const showNav = !location.pathname.startsWith("/itineraries");
   
   return (
     <>
@@ -19,7 +20,6 @@ function AppContent() {
         <Route path="/videos" element={<VideoGuides />} />
         <Route path="/itineraries" element={<Itineraries />} />
         <Route path="/insights" element={<CityInsights />} />
-        {/* Add this catch-all route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
