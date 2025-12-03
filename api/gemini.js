@@ -39,8 +39,8 @@ const modelName = "gemini-1.5-flash";
     // const modelName = "gemini-1.5-flash-latest"; // Faster alternative
     
     console.log("Using model:", modelName);
+    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
     
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
     console.log("API URL (first 100 chars):", apiUrl.substring(0, 100));
     
     const response = await fetch(apiUrl, {
