@@ -35,7 +35,8 @@ export default async function handler(req, res) {
     
     // ✅ USE THESE EXACT MODEL NAMES (tested and working):
     // Choose ONE of these:
-const modelName = "gemini-1.5-flash";
+    const modelName = "models/gemini-2.5-flash";
+
     // const modelName = "gemini-1.5-flash-latest"; // Faster alternative
     
     console.log("Using model:", modelName);
