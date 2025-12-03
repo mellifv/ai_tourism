@@ -1,23 +1,74 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
+// Helper: extract numeric budget from query
+function extractBudget(query) {
+  const numbers = query.match(/\d+/g);
+  if (!numbers) return 400000; // fallback
+  const num = parseInt(numbers.join(''), 10);
+  return Math.min(num, 400000); // hard cap safeguard
+}
 
-// AI-powered itinerary generator
-// In astana_ai_landing_prototype.jsx
 async function generateItineraryData(query = '', lang = 'en') {
   try {
-    // Use the correct endpoint - make sure this matches your file name
     const API_ENDPOINT = '/api/gemini';
-    
-    // ORIGINAL PROMPTS (as you had them)
-    const prompts = {
-      en: `Create a one-day Astana itinerary for: "${query}". Include times, places, costs in KZT. Total cost must not exceed 400,000 KZT. Each item should have a realistic cost (0-100,000 KZT). Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
-      ru: `Составьте однодневный маршрут по Астане для: "${query}". Укажите время, места, стоимость в KZT. Общая стоимость не должна превышать 400 000 KZT. Каждая позиция должна иметь реалистичную цену (0-100 000 KZT). Верните корректный JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
-      kz: `Астанаға арналған бір күндік маршрут жасаңыз: "${query}". Уақыт, орындар, бағалар KZT-де көрсетілуі керек. Жалпы шығын 400,000 KZT-ден аспауы тиіс. Әр элементтің нақты бағасы болуы керек (0-100,000 KZT арасында). Дұрыс JSON форматында қайтарыңыз: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`
-    };
 
-    console.log('Sending request to:', API_ENDPOINT);
-    console.log('Prompt length:', prompts[lang].length);
+    // Extract budget from user query
+    const userBudget = extractBudget(query);
+
+    const prompts = {
+      en: `Create a one-day Astana itinerary for the request: "${query}". 
+The MAXIMUM TOTAL COST must NOT exceed ${userBudget} KZT. 
+This budget limit is absolute — DO NOT exceed it.
+
+Rules:
+- Each item must include realistic, local Astana prices.
+- Each item cost must be between 0–100,000 KZT.
+- The itinerary must be optimized to fit the user's budget.
+- If the user's idea seems expensive, create budget-friendly alternatives that still match the vibe.
+- Return ONLY valid JSON in this exact structure:
+
+{
+  "title": "string",
+  "items": [
+    { "time": "string", "place": "string", "cost": "string", "description": "string" }
+  ]
+}`,
+      
+      ru: `Составьте однодневный маршрут по Астане по запросу: "${query}". 
+МАКСИМАЛЬНАЯ ОБЩАЯ СТОИМОСТЬ НЕ ДОЛЖНА ПРЕВЫШАТЬ ${userBudget} KZT. 
+Этот бюджет обязателен — не превышать его.
+
+Правила:
+- Реалистичные местные цены.
+- Цена каждого пункта 0–100,000 KZT.
+- Маршрут должен вписываться в бюджет.
+- Верните корректный JSON строго в формате:
+
+{
+  "title": "string",
+  "items": [
+    { "time": "string", "place": "string", "cost": "string", "description": "string" }
+  ]
+}`,
+      
+      kz: `Астанаға арналған "${query}" сұрауы бойынша бір күндік маршрут құрыңыз. 
+ЖАЛПЫ БЮДЖЕТ ${userBudget} KZT-ден АСПАУЫ ТИІС ЕМЕС. 
+Бюджет қатаң — ешқашан асырмаңыз.
+
+Ережелер:
+- Нақты, шынайы Астана бағалары.
+- Әр элемент 0–100,000 KZT аралығында.
+- Бюджетке сай нұсқа беріңіз.
+- Төмендегі JSON форматын ДӘЛ қайтарыңыз:
+
+{
+  "title": "string",
+  "items": [
+    { "time": "string", "place": "string", "cost": "string", "description": "string" }
+  ]
+}`
+    };
 
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',
@@ -25,52 +76,33 @@ async function generateItineraryData(query = '', lang = 'en') {
       body: JSON.stringify({ prompt: prompts[lang] })
     });
 
-    console.log('Response status:', response.status);
-
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Server error:', errorText);
       throw new Error(`Server error ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Response received:', data);
-    
-    if (!data.success) {
-      throw new Error(data.error || 'API request failed');
-    }
+    if (!data.success) throw new Error(data.error || "API error");
 
     const aiText = data.response;
-    console.log('AI Response raw:', aiText);
-    
-    // Try to extract JSON from the response
+
     let jsonMatch = aiText.match(/\{[\s\S]*\}/);
-    
-    if (!jsonMatch) {
-      console.error('No JSON found in response:', aiText.substring(0, 200));
-      throw new Error('No JSON found in AI response');
-    }
+    if (!jsonMatch) throw new Error("No JSON found in response");
 
     const aiResponse = JSON.parse(jsonMatch[0]);
 
-    if (aiResponse.title && aiResponse.items && Array.isArray(aiResponse.items)) {
-      const total = aiResponse.items.reduce((acc, item) => {
-        const cost = parseInt(String(item.cost).replace(/[^0-9]/g, '')) || 0;
-        return acc + cost;
-      }, 0);
+    const total = aiResponse.items.reduce((acc, item) => {
+      const cost = parseInt(String(item.cost).replace(/[^0-9]/g, '')) || 0;
+      return acc + cost;
+    }, 0);
 
-      return {
-        title: aiResponse.title,
-        items: aiResponse.items,
-        total: `${total.toLocaleString()}₸`,
-        source: 'ai'
-      };
-    } else {
-      throw new Error('Invalid itinerary format from AI');
-    }
+    return {
+      title: aiResponse.title,
+      items: aiResponse.items,
+      total: `${total.toLocaleString()}₸`,
+      source: 'ai'
+    };
 
   } catch (error) {
-    console.error('API error:', error);
     throw new Error(`Failed to generate itinerary: ${error.message}`);
   }
 }
