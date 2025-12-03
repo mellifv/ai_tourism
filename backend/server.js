@@ -10,18 +10,7 @@ const PORT = process.env.PORT;
 // Enable CORS for all origins (or restrict to your frontend domain)
 app.use(cors());
 app.use(express.json());
-// Root route for testing
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Astana AI Backend API',
-    status: 'running',
-    endpoints: [
-      { method: 'GET', path: '/api/health', description: 'Health check' },
-      { method: 'POST', path: '/api/free-ai', description: 'AI itinerary generator' }
-    ],
-    timestamp: new Date().toISOString()
-  });
-});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', environment: process.env.NODE_ENV || 'development' });
