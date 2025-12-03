@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 async function generateItineraryData(query = '', lang = 'en') {
   try {
     // Get API URL from environment variable with fallback
-    const API_BASE = import.meta.env.VITE_API_URL || 'https://aitourism-production.up.railway.app';
-    const API_ENDPOINT = `${API_BASE}/api/free-ai`;
+    const API_ENDPOINT = `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api/free-ai`;
+
     const prompts = {
       en: `Create a one-day Astana itinerary for: "${query}". Include times, places, costs in KZT. Total cost must not exceed 400,000 KZT. Each item should have a realistic cost (0-100,000 KZT). Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
       ru: `Составьте однодневный маршрут по Астане для: "${query}". Укажите время, места, стоимость в KZT. Общая стоимость не должна превышать 400 000 KZT. Каждая позиция должна иметь реалистичную цену (0-100 000 KZT). Верните корректный JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
