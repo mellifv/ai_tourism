@@ -1,66 +1,86 @@
 // src/pages/api/free-ai/route.js
+
 export async function POST(request) {
   try {
-    const { prompt } = await request.json();
-    
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt // Your full prompt is already in the frontend
-          }]
-        }]
-      })
-    });
-    
+    // Parse JSON safely
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid JSON body' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    const { prompt } = body;
+    if (!prompt || !prompt.trim()) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Prompt is required' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+
+    // Call Gemini API
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      }
+    );
+
     if (!response.ok) {
-      throw new Error(`API responded with status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Gemini API error:', errorText);
+      return new Response(
+        JSON.stringify({ success: false, error: 'AI API error', details: errorText }),
+        { status: response.status, headers: corsHeaders }
+      );
     }
-    
+
     const data = await response.json();
-    
-    if (!data.candidates || !data.candidates[0]) {
-      throw new Error('No response from AI');
+
+    // Defensive parsing
+    const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!aiText) {
+      console.error('Invalid AI response:', data);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid AI response', details: data }),
+        { status: 500, headers: corsHeaders }
+      );
     }
-    
-    return new Response(JSON.stringify({ 
-      success: true,
-      response: data.candidates[0].content.parts[0].text 
-    }), {
-      status: 200,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST'
-      }
-    });
-    
+
+    // Optional: extract JSON if extra text exists
+    const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+    const aiResponse = jsonMatch ? JSON.parse(jsonMatch[0]) : aiText;
+
+    return new Response(
+      JSON.stringify({ success: true, response: aiResponse }),
+      { status: 200, headers: corsHeaders }
+    );
+
   } catch (error) {
-    console.error('API Error:', error);
-    return new Response(JSON.stringify({ 
-      success: false,
-      error: 'Failed to generate response',
-      details: error.message 
-    }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
+    console.error('Server error:', error);
+    return new Response(
+      JSON.stringify({ success: false, error: 'Failed to generate AI response', details: error.message }),
+      { status: 500, headers: corsHeaders }
+    );
   }
 }
 
-// Handle OPTIONS for CORS
+// OPTIONS for CORS preflight
 export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  });
+  return new Response(null, { status: 204, headers: corsHeaders });
 }
+
+// Common CORS headers
+const corsHeaders = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type'
+};
