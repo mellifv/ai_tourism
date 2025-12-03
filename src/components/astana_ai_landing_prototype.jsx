@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 // AI-powered itinerary generator
 async function generateItineraryData(query = '', lang = 'en') {
   try {
-    // Get API URL from environment variable with fallback
-const API_ENDPOINT = '/api/free-ai';
+    const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/api/free-ai`;    
 
     const prompts = {
       en: `Create a one-day Astana itinerary for: "${query}". Include times, places, costs in KZT. Total cost must not exceed 400,000 KZT. Each item should have a realistic cost (0-100,000 KZT). Return valid JSON: {"title": "string", "items": [{"time": "string", "place": "string", "cost": "string", "description": "string"}]}`,
@@ -163,38 +162,28 @@ export default function Home() {
   return (
     <main className="min-h-screen text-white antialiased">
       {/* Background omitted for brevity */}
-<header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-  <div className="flex items-center gap-3">
-    {/* Logo/Brand - make it clickable */}
-    <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500 shadow-lg flex items-center justify-center text-black font-bold">AI</div>
-      <div>
-        <div className="text-lg font-semibold tracking-wide">Astana AI Trips</div>
-        <div className="text-xs text-slate-300">Future-ready travel planning</div>
-      </div>
-    </Link>
-  </div>
-  
-  {/* Navigation links */}
-  <nav className="flex items-center gap-6">
-    <Link to="/" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">
-      Home
-    </Link>
-    <Link to="/videos" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">
-      Video Guides
-    </Link>
-    <Link to="/insights" className="text-slate-300 hover:text-white transition-colors text-sm font-medium">
-      City Insights
-    </Link>
-    
-    {/* Language switcher */}
-    <div className="flex items-center gap-2 ml-4">
-      <button onClick={() => setLang('en')} className={`px-3 py-1 rounded ${lang==='en' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>EN</button>
-      <button onClick={() => setLang('ru')} className={`px-3 py-1 rounded ${lang==='ru' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>RU</button>
-      <button onClick={() => setLang('kz')} className={`px-3 py-1 rounded ${lang==='kz' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>KZ</button>
-    </div>
-  </nav>
-</header>
+// Add this inside your Itineraries.jsx header section:
+      <header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {/* Logo/Brand - make it clickable */}
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500 shadow-lg flex items-center justify-center text-black font-bold">AI</div>
+            <div>
+              <div className="text-lg font-semibold tracking-wide">Astana AI Trips</div>
+              <div className="text-xs text-slate-300">Future-ready travel planning</div>
+            </div>
+          </Link>
+        </div>
+      
+          
+          {/* Language switcher */}
+          <div className="flex items-center gap-2 ml-4">
+            <button onClick={() => setLang('en')} className={`px-3 py-1 rounded ${lang==='en' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>EN</button>
+            <button onClick={() => setLang('ru')} className={`px-3 py-1 rounded ${lang==='ru' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>RU</button>
+            <button onClick={() => setLang('kz')} className={`px-3 py-1 rounded ${lang==='kz' ? 'bg-cyan-400 text-black' : 'bg-white/10'}`}>KZ</button>
+          </div>
+        </nav>
+      </header>
 
       <section id="hero" className="max-w-6xl mx-auto px-6 pt-10 pb-20 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
         <div className="md:col-span-7">
