@@ -1,6 +1,27 @@
 // /api/auth/login.js
 import { Redis } from '@upstash/redis';
+// In your login.js API endpoint
+const tokenData = {
+  email: user.email,
+  createdAt: user.createdAt,
+  exp: Math.floor(Date.now() / 1000) + 86400
+};
 
+// Create proper JWT format
+const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64');
+const payload = Buffer.from(JSON.stringify(tokenData)).toString('base64');
+// For now, use a mock signature (in production, use real HMAC)
+const signature = Buffer.from('your-secret-key-' + Date.now()).toString('base64').slice(0, 43);
+const token = `${header}.${payload}.${signature}`;
+
+return res.status(200).json({
+  success: true,
+  token: token,
+  user: {
+    email: user.email,
+    createdAt: user.createdAt
+  }
+});
 // Use the correct variable names
 const redis = new Redis({
   url: process.env.regusers_KV_REST_API_URL,
