@@ -14,7 +14,7 @@ export default defineConfig({
       input: {
         main: './index.html',
       },
-      external: ['jwt-decode']
+      external: []
     },
   },
   preview: {
