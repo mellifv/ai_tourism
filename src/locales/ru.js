@@ -7,7 +7,11 @@ export default {
     home: "Главная",
     videoGuides: "Видео-гиды",
     itineraries: "Маршруты",
-    cityInsights: "Городские советы"
+    cityInsights: "Городские советы",
+      login: "Войти", // ← Added
+    register: "Регистрация", // ← Added
+    welcome: "Привет", // ← Added
+    logout: "Выйти" // ← Added
   },
   hero: {
     title: "Исследуйте Астану с маршрутами от ИИ",
