@@ -7,7 +7,11 @@ export default {
     home: "Басты бет",
     videoGuides: "Видео гидтер",
     itineraries: "Маршруттар",
-    cityInsights: "Қалалық кеңестер"
+    cityInsights: "Қалалық кеңестер",
+login: "Кіру", // ← Added
+    register: "Тіркелу", // ← Added
+    welcome: "Сәлем", // ← Added
+    logout: "Шығу" // ← Added
   },
   hero: {
     title: "AI жасаған маршруттармен Астананы зерттеңіз",
