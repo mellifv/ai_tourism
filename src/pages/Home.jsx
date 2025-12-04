@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 
-
 export default function Home() {
   const { t } = useLanguage();
+  const { user, logout } = useAuth(); // ← MOVE THIS HERE (top of component)
 
   return (
     <div className="min-h-screen">
@@ -17,13 +17,13 @@ export default function Home() {
 
         <div className="max-w-6xl mx-auto px-6 relative z-10 text-white">
           
-          const { user, logout } = useAuth();
+          {/* REMOVED: const { user, logout } = useAuth(); from here */}
           
           <div className="absolute right-6 top-6 flex gap-3">
             {!user ? (
               <>
-                <Link to="/login"><button className="...">Login</button></Link>
-                <Link to="/register"><button className="...">Register</button></Link>
+                <Link to="/login"><button className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition">Login</button></Link>
+                <Link to="/register"><button className="px-4 py-2 rounded-lg bg-white hover:bg-slate-100 text-blue-600 transition">Register</button></Link>
               </>
             ) : (
               <>
@@ -34,6 +34,7 @@ export default function Home() {
               </>
             )}
           </div>
+          
           {/* --- HERO TEXT --- */}
           <motion.h1
             initial={{ y: 20, opacity: 0 }}
