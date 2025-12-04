@@ -1,13 +1,27 @@
+// /components/Nav.jsx
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext'; // ← Add this import
+import { useAuth } from '../context/AuthContext';
 import LanguageSelector from './LanguageSelector';
 
 export default function Nav() {
   const { t } = useLanguage();
   const location = useLocation();
-  const { user, logout } = useAuth(); // ← Add this hook
+  const { user, logout, loading } = useAuth(); // Add loading
+  
+  console.log('Nav render - user:', user, 'loading:', loading);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <nav className="w-full bg-white/5 backdrop-blur-sm border-b border-white/5">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="text-sm text-slate-400">Loading auth...</div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="w-full bg-white/5 backdrop-blur-sm border-b border-white/5">
@@ -48,7 +62,7 @@ export default function Nav() {
             {t('nav.cityInsights', 'City Insights')}
           </Link>
           
-          {/* Auth Section */}
+          {/* Auth Section - Fixed with better conditional rendering */}
           <div className="flex items-center gap-2 ml-4">
             {!user ? (
               <>
@@ -68,7 +82,7 @@ export default function Nav() {
             ) : (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-slate-200">
-                  {t('nav.welcome', 'Hi')} {user?.email?.split('@')[0] || 'User'} {/* ← Optional chaining */}
+                  {t('nav.welcome', 'Hi')} {user?.email ? user.email.split('@')[0] : 'User'}
                 </span>
                 <button
                   onClick={logout}
@@ -80,7 +94,6 @@ export default function Nav() {
             )}
           </div>
           
-          {/* LanguageSelector */}
           <LanguageSelector />
         </div>
       </div>
