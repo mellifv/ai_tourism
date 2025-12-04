@@ -1,8 +1,31 @@
 // /context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
+
+// Helper to decode base64 (handles both JWT and simple base64)
+function decodeToken(t) {
+  try {
+    // Try to parse as JWT first (header.payload.signature)
+    const parts = t.split('.');
+    
+    if (parts.length === 3) {
+      // It's a JWT, decode the payload (middle part)
+      const payload = parts[1];
+      // Add padding if needed
+      const padded = payload + '='.repeat((4 - payload.length % 4) % 4);
+      const decodedStr = atob(padded);
+      return JSON.parse(decodedStr);
+    } else {
+      // It's simple base64, decode directly
+      const decodedStr = atob(t);
+      return JSON.parse(decodedStr);
+    }
+  } catch (err) {
+    console.error('Token decode error:', err);
+    throw new Error('Invalid token format');
+  }
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -10,18 +33,14 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('AuthProvider mounting...');
     const t = localStorage.getItem('token');
-    console.log('Token from localStorage:', t ? 'Exists' : 'None');
-    
     if (t) {
       try {
-        const decoded = jwtDecode(t);
-        console.log('Decoded token:', decoded);
+        const decoded = decodeToken(t);
         setToken(t);
         setUser({ email: decoded.email });
       } catch (err) {
-        console.error('Invalid token:', err);
+        console.error('Invalid token, removing:', err);
         localStorage.removeItem('token');
       }
     }
@@ -29,26 +48,22 @@ export function AuthProvider({ children }) {
   }, []);
 
   function loginWithToken(t) {
-    console.log('loginWithToken called with:', t.substring(0, 50) + '...');
     localStorage.setItem('token', t);
     setToken(t);
     try {
-      const decoded = jwtDecode(t);
-      console.log('Login decoded:', decoded);
+      const decoded = decodeToken(t);
       setUser({ email: decoded.email });
-    } catch {
+    } catch (err) {
+      console.error('Failed to decode token:', err);
       setUser(null);
     }
   }
 
   function logout() {
-    console.log('Logout called');
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
   }
-
-  console.log('AuthProvider render - user:', user, 'loading:', loading);
 
   return (
     <AuthContext.Provider value={{ user, token, loginWithToken, logout, loading }}>
@@ -58,9 +73,5 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
+  return useContext(AuthContext);
 }
