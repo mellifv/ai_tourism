@@ -3,27 +3,26 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
 
-// Helper to decode base64 (handles both JWT and simple base64)
-function decodeToken(t) {
+// Decode simple base64 tokens (not JWT)
+function decodeBase64Token(token) {
   try {
-    // Try to parse as JWT first (header.payload.signature)
-    const parts = t.split('.');
-    
-    if (parts.length === 3) {
-      // It's a JWT, decode the payload (middle part)
-      const payload = parts[1];
-      // Add padding if needed
-      const padded = payload + '='.repeat((4 - payload.length % 4) % 4);
-      const decodedStr = atob(padded);
-      return JSON.parse(decodedStr);
-    } else {
-      // It's simple base64, decode directly
-      const decodedStr = atob(t);
-      return JSON.parse(decodedStr);
+    // If it looks like JWT (has dots), take the middle part
+    if (token.includes('.')) {
+      const parts = token.split('.');
+      // If it has 3 parts like JWT
+      if (parts.length === 3) {
+        token = parts[1]; // Take payload part
+      }
     }
-  } catch (err) {
-    console.error('Token decode error:', err);
-    throw new Error('Invalid token format');
+    
+    // Decode base64 with proper padding
+    const base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+    const jsonString = atob(padded);
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.error('Token decode failed:', error);
+    throw error;
   }
 }
 
@@ -34,13 +33,16 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const t = localStorage.getItem('token');
+    console.log('Auth init - token exists:', !!t);
+    
     if (t) {
       try {
-        const decoded = decodeToken(t);
+        const decoded = decodeBase64Token(t);
+        console.log('Token decoded successfully:', decoded);
         setToken(t);
         setUser({ email: decoded.email });
       } catch (err) {
-        console.error('Invalid token, removing:', err);
+        console.error('Failed to decode token:', err);
         localStorage.removeItem('token');
       }
     }
@@ -48,22 +50,28 @@ export function AuthProvider({ children }) {
   }, []);
 
   function loginWithToken(t) {
+    console.log('loginWithToken called, token length:', t?.length);
     localStorage.setItem('token', t);
     setToken(t);
+    
     try {
-      const decoded = decodeToken(t);
+      const decoded = decodeBase64Token(t);
+      console.log('Token decoded on login:', decoded);
       setUser({ email: decoded.email });
     } catch (err) {
-      console.error('Failed to decode token:', err);
+      console.error('Failed to decode token in login:', err);
       setUser(null);
     }
   }
 
   function logout() {
+    console.log('Logout called');
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
   }
+
+  console.log('AuthProvider render - user:', user, 'loading:', loading);
 
   return (
     <AuthContext.Provider value={{ user, token, loginWithToken, logout, loading }}>
