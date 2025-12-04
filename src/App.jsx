@@ -5,6 +5,7 @@ import VideoGuides from "./pages/VideoGuides";
 import Itineraries from "./pages/Itineraries";
 import CityInsights from "./pages/CityInsights";
 import Nav from "./components/Nav";
+import { AuthProvider } from './context/AuthContext';
 
 function AppContent() {
   const location = useLocation();
