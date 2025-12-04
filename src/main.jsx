@@ -3,13 +3,16 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/globals.css';
 import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext'; // ← Add this import
 
 const root = createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* ✅ WRAP App with LanguageProvider */}
+    {/* ✅ Wrap App with both providers */}
     <LanguageProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </LanguageProvider>
   </React.StrictMode>
 );
