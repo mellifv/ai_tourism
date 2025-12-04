@@ -1,75 +1,74 @@
 // /api/auth/login.js
 import { Redis } from '@upstash/redis';
 
-const redis = Redis.fromEnv();
-
-function normalizeEmail(email = '') {
-  return email.trim().toLowerCase();
-}
+// Use the correct variable names
+const redis = new Redis({
+  url: process.env.regusers_KV_REST_API_URL,
+  token: process.env.regusers_KV_REST_API_TOKEN,
+});
 
 export default async function handler(req, res) {
-  // Same CORS headers as register.js
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+  console.log('Login endpoint called');
+  
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
     }
-
-    const normalized = normalizeEmail(email);
-    const userKey = `user:${normalized}`;
-
-    // Get user from Redis
+    
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+    
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
+    }
+    
+    const normalizedEmail = email.toLowerCase().trim();
+    const userKey = `user:${normalizedEmail}`;
+    
+    // Get user
     const user = await redis.hgetall(userKey);
     
     if (!user || !user.email) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
-    // Simple password check (for demo)
+    
+    // Check password
     const inputHash = Buffer.from(password).toString('base64');
     if (inputHash !== user.passwordHash) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
-    // Create a simple JWT-like token
-    const tokenPayload = {
+    
+    // Create token
+    const tokenData = {
       email: user.email,
       createdAt: user.createdAt,
-      exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours
+      exp: Math.floor(Date.now() / 1000) + 86400 // 24 hours
     };
-
-    // Base64 encode (this is NOT secure JWT, just for demo)
-    const token = Buffer.from(JSON.stringify(tokenPayload)).toString('base64');
-
+    
+    const token = Buffer.from(JSON.stringify(tokenData)).toString('base64');
+    
     return res.status(200).json({
-      message: 'Login successful',
+      success: true,
       token: token,
       user: {
         email: user.email,
-        createdAt: user.createdAt,
+        createdAt: user.createdAt
       }
     });
     
-  } catch (err) {
-    console.error('Login error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+  } catch (error) {
+    console.error('Login API error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error.message
+    });
   }
 }
