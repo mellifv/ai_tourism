@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+
 
 export default function Home() {
   const { t } = useLanguage();
@@ -14,22 +16,24 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-blue-700/60 via-blue-600/40 to-white/10" />
 
         <div className="max-w-6xl mx-auto px-6 relative z-10 text-white">
-
-          {/* --- LOGIN + REGISTER BUTTONS (Top Right) --- */}
+          
+          const { user, logout } = useAuth();
+          
           <div className="absolute right-6 top-6 flex gap-3">
-            <Link to="/login">
-              <button className="px-4 py-2 text-sm rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition backdrop-blur-md">
-                {t('auth.login', 'Login')}
-              </button>
-            </Link>
-
-            <Link to="/register">
-              <button className="px-4 py-2 text-sm rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-medium shadow-lg hover:scale-[1.03] active:scale-100 transition">
-                {t('auth.register', 'Register')}
-              </button>
-            </Link>
+            {!user ? (
+              <>
+                <Link to="/login"><button className="...">Login</button></Link>
+                <Link to="/register"><button className="...">Register</button></Link>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 bg-white/5 p-2 rounded-xl">
+                  <span className="text-sm text-slate-100">Signed in as {user.email}</span>
+                  <button onClick={logout} className="px-3 py-1 rounded-lg bg-rose-600 text-white">Logout</button>
+                </div>
+              </>
+            )}
           </div>
-
           {/* --- HERO TEXT --- */}
           <motion.h1
             initial={{ y: 20, opacity: 0 }}
