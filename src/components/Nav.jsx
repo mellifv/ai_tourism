@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext'; // ← Add this import
 import LanguageSelector from './LanguageSelector';
 
 export default function Nav() {
   const { t } = useLanguage();
   const location = useLocation();
+  const { user, logout } = useAuth(); // ← Add this hook
 
   return (
     <nav className="w-full bg-white/5 backdrop-blur-sm border-b border-white/5">
@@ -46,7 +48,39 @@ export default function Nav() {
             {t('nav.cityInsights', 'City Insights')}
           </Link>
           
-          {/* Add LanguageSelector here */}
+          {/* Auth Section */}
+          <div className="flex items-center gap-2 ml-4">
+            {!user ? (
+              <>
+                <Link
+                  to="/login"
+                  className="px-3 py-1.5 text-sm rounded-md bg-white/10 hover:bg-white/20 text-white transition"
+                >
+                  {t('nav.login', 'Login')}
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-3 py-1.5 text-sm rounded-md bg-white hover:bg-slate-100 text-blue-600 transition"
+                >
+                  {t('nav.register', 'Register')}
+                </Link>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-200">
+                  {t('nav.welcome', 'Hi')} {user?.email?.split('@')[0] || 'User'} {/* ← Optional chaining */}
+                </span>
+                <button
+                  onClick={logout}
+                  className="px-3 py-1.5 text-sm rounded-md bg-rose-600 hover:bg-rose-700 text-white transition"
+                >
+                  {t('nav.logout', 'Logout')}
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* LanguageSelector */}
           <LanguageSelector />
         </div>
       </div>
