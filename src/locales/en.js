@@ -7,7 +7,12 @@ export default {
     home: "Home",
     videoGuides: "Video Guides",
     itineraries: "Itineraries",
-    cityInsights: "City Insights"
+    cityInsights: "City Insights",
+    login: "Login", // ← Added
+    register: "Register", // ← Added
+    welcome: "Hi", // ← Added
+    logout: "Logout" // ← Added
+      
   },
   hero: {
     title: "Explore Astana with AI-curated",
@@ -66,4 +71,5 @@ export default {
     }
   }
 };
+
 
